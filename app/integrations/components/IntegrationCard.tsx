@@ -1,0 +1,69 @@
+"use client"
+
+import { useState } from "react"
+import type { Integration } from "../../data/integrations"
+import { Card, CardContent } from "@/components/ui/card"
+import { Heart } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+type IntegrationCardProps = {
+  integration: Integration
+  onSelect: (integration: Integration) => void
+  isFavorite: boolean
+  onToggleFavorite: (id: string) => void
+}
+
+export default function IntegrationCard({ integration, onSelect, isFavorite, onToggleFavorite }: IntegrationCardProps) {
+  const Icon = integration.icon
+  const [isHovering, setIsHovering] = useState(false)
+
+  return (
+    <Card
+      className="hover:shadow-lg transition-all duration-300 group h-full cursor-pointer transform hover:-translate-y-1"
+      onClick={() => onSelect(integration)}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <CardContent className="p-4 flex flex-col h-full relative">
+        <button
+          className="absolute top-2 right-2 z-10"
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleFavorite(integration.id)
+          }}
+        >
+          <Heart
+            className={cn(
+              "w-5 h-5 transition-all duration-300",
+              isFavorite ? "fill-red-500 text-red-500" : "text-gray-300",
+              isHovering && !isFavorite ? "text-gray-400" : "",
+            )}
+          />
+        </button>
+        <div className="flex flex-col items-center text-center space-y-2 mb-2">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300"
+            style={{ backgroundColor: `${integration.color}20` }}
+          >
+            <Icon
+              className="w-6 h-6 transition-transform duration-300 group-hover:scale-110"
+              style={{ color: integration.color }}
+            />
+          </div>
+          <h3 className="font-semibold text-sm">{integration.name}</h3>
+        </div>
+        <p className="text-xs text-gray-500 flex-grow overflow-hidden">
+          {integration.description.length > 150
+            ? `${integration.description.substring(0, 150)}...`
+            : integration.description}
+        </p>
+        <div className="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center">
+          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">{integration.category}</span>
+          <span className="text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            View details →
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
