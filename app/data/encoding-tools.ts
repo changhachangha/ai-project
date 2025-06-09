@@ -7,7 +7,8 @@ import {
   Key,
   Type,
 } from 'lucide-react';
-import type { Integration } from './integrations';
+// 수정된 부분: Integration 타입을 types.ts에서 가져옵니다.
+import type { Integration } from './types';
 
 export const encodingTools: Integration[] = [
   {

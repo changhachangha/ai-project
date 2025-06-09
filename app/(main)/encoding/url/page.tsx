@@ -3,42 +3,44 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { useEncoding } from '@/hooks/useEncoding';
 import { Globe } from 'lucide-react';
-import { useState } from 'react';
+// --- 수정: useState와 useEffect를 추가로 import ---
+import { useEffect, useState } from 'react';
+// --- 수정: Checkbox 컴포넌트 import (UI 라이브러리에 없으므로 임시로 사용) ---
+// 실제로는 shadcn/ui에서 Checkbox를 추가해서 사용하는 것이 좋습니다.
+// npm install @radix-ui/react-checkbox
+// npx shadcn-ui@latest add checkbox
 
 export default function UrlTool() {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [mode, setMode] = useState<'encode' | 'decode'>('encode');
+  // --- 수정: 실시간 변환 상태 추가 ---
+  const [isRealtime, setIsRealtime] = useState(true);
 
-  const handleEncode = () => {
-    try {
-      const encoded = encodeURIComponent(input);
-      setOutput(encoded);
-    } catch (_error) {
-      setOutput('인코딩 중 오류가 발생했습니다. 유효한 텍스트를 입력해주세요.');
+  const {
+    input,
+    setInput,
+    output,
+    mode,
+    setMode,
+    handleEncode,
+    handleDecode,
+    handleClear,
+    handleCopy,
+  } = useEncoding({
+    encodeFn: encodeURIComponent,
+    decodeFn: decodeURIComponent,
+  });
+
+  // --- 수정: 실시간 변환을 위한 useEffect 추가 ---
+  useEffect(() => {
+    if (isRealtime) {
+      if (mode === 'encode') {
+        handleEncode();
+      } else {
+        handleDecode();
+      }
     }
-  };
-
-  const handleDecode = () => {
-    try {
-      const decoded = decodeURIComponent(input);
-      setOutput(decoded);
-    } catch (_error) {
-      setOutput(
-        '디코딩 중 오류가 발생했습니다. 유효한 URL 인코딩 문자열을 입력해주세요.'
-      );
-    }
-  };
-
-  const handleClear = () => {
-    setInput('');
-    setOutput('');
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(output);
-  };
+  }, [input, mode, isRealtime, handleEncode, handleDecode]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -83,11 +85,30 @@ export default function UrlTool() {
               }
               className="min-h-[200px] mb-4 font-mono"
             />
-            <Button
-              className="w-full"
-              onClick={mode === 'encode' ? handleEncode : handleDecode}>
-              {mode === 'encode' ? '인코딩' : '디코딩'}
-            </Button>
+
+            {/* --- 수정: 실시간 변환 체크박스와 변환 버튼 UI --- */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <input
+                  id="realtime-checkbox"
+                  type="checkbox"
+                  checked={isRealtime}
+                  onChange={(e) => setIsRealtime(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <label
+                  htmlFor="realtime-checkbox"
+                  className="text-sm font-medium">
+                  실시간 변환
+                </label>
+              </div>
+              {!isRealtime && (
+                <Button
+                  onClick={mode === 'encode' ? handleEncode : handleDecode}>
+                  {mode === 'encode' ? '인코딩' : '디코딩'}
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
 

@@ -3,52 +3,45 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { FileCode } from 'lucide-react';
-import { useState } from 'react';
+import { useEncoding } from '@/hooks/useEncoding';
+// --- 수정: 'rfc4648' 라이브러리에서 base32 객체를 import ---
+import { Key } from 'lucide-react';
+import { base32 } from 'rfc4648';
 
-export default function Base64Tool() {
-  const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [mode, setMode] = useState<'encode' | 'decode'>('encode');
-
-  const handleEncode = () => {
-    try {
-      const encoded = btoa(input);
-      setOutput(encoded);
-    } catch (_error) {
-      setOutput('인코딩 중 오류가 발생했습니다. 유효한 텍스트를 입력해주세요.');
-    }
-  };
-
-  const handleDecode = () => {
-    try {
-      const decoded = atob(input);
-      setOutput(decoded);
-    } catch (_error) {
-      setOutput(
-        '디코딩 중 오류가 발생했습니다. 유효한 Base64 문자열을 입력해주세요.'
-      );
-    }
-  };
-
-  const handleClear = () => {
-    setInput('');
-    setOutput('');
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(output);
-  };
+export default function Base32Tool() {
+  const {
+    input,
+    setInput,
+    output,
+    mode,
+    setMode,
+    handleEncode,
+    handleDecode,
+    handleClear,
+    handleCopy,
+  } = useEncoding({
+    // --- 수정: rfc4648 라이브러리의 API에 맞게 로직 변경 ---
+    encodeFn: (text) => {
+      const textAsBytes = new TextEncoder().encode(text);
+      // rfc4648의 stringify 메소드를 사용하여 인코딩
+      return base32.stringify(textAsBytes, { pad: false });
+    },
+    decodeFn: (base32String) => {
+      // rfc4648의 parse 메소드를 사용하여 디코딩
+      const bytes = base32.parse(base32String);
+      return new TextDecoder().decode(bytes);
+    },
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-3 mb-8">
         <div
           className="w-12 h-12 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: '#4CAF5020' }}>
-          <FileCode className="w-6 h-6" style={{ color: '#4CAF50' }} />
+          style={{ backgroundColor: '#2196F320' }}>
+          <Key className="w-6 h-6" style={{ color: '#2196F3' }} />
         </div>
-        <h1 className="text-3xl font-bold">Base64 인코더/디코더</h1>
+        <h1 className="text-3xl font-bold">Base32 인코더/디코더</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -75,12 +68,10 @@ export default function Base64Tool() {
               placeholder={
                 mode === 'encode'
                   ? '인코딩할 텍스트를 입력하세요...'
-                  : '디코딩할 Base64 문자열을 입력하세요...'
+                  : '디코딩할 Base32 문자열을 입력하세요...'
               }
               value={input}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setInput(e.target.value)
-              }
+              onChange={(e) => setInput(e.target.value)}
               className="min-h-[200px] mb-4"
             />
             <Button

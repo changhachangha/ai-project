@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { encodingTools } from '../data/encoding-tools';
-import type { Integration } from '../data/integrations';
-import CategoryFilter from '../integrations/components/CategoryFilter';
-import IntegrationGrid from '../integrations/components/IntegrationGrid';
-import SearchBar from '../integrations/components/SearchBar';
+import { encodingTools } from '../../data/encoding-tools';
+import type { Integration } from '../../data/integrations';
+import CategoryFilter from '../../integrations/components/CategoryFilter';
+import IntegrationGrid from '../../integrations/components/IntegrationGrid';
+import SearchBar from '../../integrations/components/SearchBar';
 
 const categories = ['베이스 인코딩', 'URL/텍스트 처리', '진수 변환'];
 
