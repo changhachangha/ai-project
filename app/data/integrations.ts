@@ -1,8 +1,11 @@
 import { encodingTools } from './encoding-tools';
 import type { Integration } from './types';
 
-// 기존의 평평한 배열을 카테고리별로 그룹화된 배열로 변경합니다.
-const groupedTools = encodingTools.reduce((acc, tool) => {
+// 모든 도구들을 합칩니다.
+export const allTools: Integration[] = [...encodingTools];
+
+// 모든 도구들을 카테고리별로 그룹화합니다.
+export const groupedTools = allTools.reduce((acc, tool) => {
     // 현재 도구의 카테고리를 찾습니다.
     let group = acc.find((g) => g.category === tool.category);
 
@@ -16,10 +19,7 @@ const groupedTools = encodingTools.reduce((acc, tool) => {
     group.tools.push(tool);
 
     return acc;
-}, [] as { category: string; tools: Integration[] });
+}, [] as { category: string; tools: Integration[] }[]);
 
-// 외부에서 사용할 데이터들을 export 합니다.
-// 외부에서 사용할 데이터들을 export 합니다.
-export { groupedTools, type Integration };
-export const allTools: Integration[] = [...encodingTools];
+// 모든 카테고리 목록을 생성합니다.
 export const allCategories: string[] = ['All', ...groupedTools.map((g) => g.category)];
