@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef } from 'react';
-import type { Integration } from '../../data/integrations';
+import type { Integration } from '../../../data/types';
 
 type FeaturedIntegrationsProps = {
   integrations: Integration[];
@@ -58,9 +58,10 @@ export default function FeaturedIntegrations({
                 className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: `${integration.color}20` }}>
                 {integration.icon && (
-                  <div className="w-5 h-5" style={{ color: integration.color }}>
-                    {integration.icon && <integration.icon />}
-                  </div>
+                  <integration.icon 
+                    className="w-5 h-5"
+                    style={{ color: integration.color }}
+                  />
                 )}
               </div>
               <h3 className="font-medium">{integration.name}</h3>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { Integration } from "../../data/integrations"
+import type { Integration } from "../../../data/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart } from "lucide-react"
 import { cn } from "@/lib/utils"

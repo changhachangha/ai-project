@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import type { Integration } from "../../data/integrations"
+import type { Integration } from "../../../data/types"
 import IntegrationCard from "./IntegrationCard"
 
 type IntegrationGridProps = {

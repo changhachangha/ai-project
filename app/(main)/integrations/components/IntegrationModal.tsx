@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Heart, X } from "lucide-react"
-import type { Integration } from "../../data/integrations"
+import type { Integration } from "../../../data/types"
 import { cn } from "@/lib/utils"
 
 type IntegrationModalProps = {

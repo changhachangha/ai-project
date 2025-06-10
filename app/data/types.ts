@@ -1,4 +1,4 @@
-import type React from 'react';
+import type { LucideIcon } from 'lucide-react';
 
 // 두 파일에서 공통으로 사용하던 타입을 이 파일에 정의합니다.
 export type Integration = {
@@ -6,6 +6,6 @@ export type Integration = {
   name: string;
   description: string;
   category: string;
-  icon: React.ComponentType;
+  icon: LucideIcon;
   color: string;
 };
