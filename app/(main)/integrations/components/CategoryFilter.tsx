@@ -1,3 +1,5 @@
+// app/(main)/integrations/components/CategoryFilter.tsx
+
 'use client';
 
 import type { Integration } from '@/app/data/types';
@@ -8,29 +10,41 @@ import { ChevronDown, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+// --- 추가: 카테고리 이름을 URL 경로로 변환하는 헬퍼 함수 ---
+const getPathForCategory = (category: string) => {
+    switch (category) {
+        case '텍스트 처리':
+            return 'text';
+        case '보안/암호화':
+            return 'security';
+        default:
+            return 'encoding';
+    }
+};
+
 type CategoryFilterProps = {
     groupedTools: {
         category: string;
         tools: Integration[];
     }[];
-    // --- 수정: 모바일 사이드바의 열림/닫힘 상태를 제어하기 위한 props 추가 ---
     isOpen: boolean;
     onClose: () => void;
 };
 
-// --- 수정: props 타입 반영 ---
 export default function CategoryFilter({ groupedTools, isOpen, onClose }: CategoryFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
 
     const [openCategory, setOpenCategory] = useState<string | null>(() => {
-        const currentTool = groupedTools.flatMap((g) => g.tools).find((t) => pathname.includes(`/encoding/${t.id}`));
+        const currentTool = groupedTools.flatMap((g) => g.tools).find((t) => pathname.includes(`/${t.id}`));
         return currentTool?.category || null;
     });
 
-    const handleLinkClick = (path: string) => {
+    const handleLinkClick = (tool: Integration) => {
+        // --- 수정: 동적 경로 생성 ---
+        const path = `/${getPathForCategory(tool.category)}/${tool.id}`;
         router.push(path);
-        onClose(); // --- 추가: 링크 클릭 시 사이드바가 닫히도록 함 ---
+        onClose();
     };
 
     const SidebarContent = () => (
@@ -76,10 +90,11 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
                                             size="sm"
                                             className={cn(
                                                 'w-full justify-start font-normal text-muted-foreground hover:bg-accent',
-                                                pathname.includes(`/encoding/${tool.id}`) &&
+                                                pathname.endsWith(`/${tool.id}`) &&
                                                     'bg-primary text-primary-foreground font-semibold hover:bg-primary/90'
                                             )}
-                                            onClick={() => handleLinkClick(`/encoding/${tool.id}`)}
+                                            // --- 수정: tool 객체 전체를 전달 ---
+                                            onClick={() => handleLinkClick(tool)}
                                         >
                                             {tool.name}
                                         </Button>
@@ -95,7 +110,6 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
 
     return (
         <>
-            {/* --- 수정: 모바일용 오버레이 사이드바 --- */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -121,7 +135,6 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
                 )}
             </AnimatePresence>
 
-            {/* --- 수정: 데스크톱용 고정 사이드바 --- */}
             <aside className="w-64 bg-white shadow-md flex-col h-screen hidden md:flex">
                 <SidebarContent />
             </aside>

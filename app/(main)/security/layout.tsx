@@ -1,19 +1,17 @@
-// app/(main)/encoding/layout.tsx
+// 파일 경로: app/(main)/security/layout.tsx
 
 'use client';
 
 import { Button } from '@/components/ui/button';
-// --- 수정: 'encodingTools' 대신 'allTools'를 import ---
 import { allTools } from '@/app/data/integrations';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-export default function EncodingToolLayout({ children }: { children: React.ReactNode }) {
+export default function SecurityToolLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
-    // --- 수정: 검색 대상을 allTools로 변경 ---
     const currentTool = useMemo(() => {
         const toolId = pathname.split('/').pop();
         return allTools.find((tool) => tool.id === toolId);

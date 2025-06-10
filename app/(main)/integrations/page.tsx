@@ -1,3 +1,5 @@
+// app/(main)/integrations/page.tsx
+
 'use client';
 
 import { motion } from 'framer-motion';
@@ -7,7 +9,19 @@ import type { Integration } from '../../data/types';
 import { allTools } from '../../data/integrations';
 import IntegrationGrid from './components/IntegrationGrid';
 import SearchBar from './components/SearchBar';
-import SortOptions from './components/SortOptions';
+import SortOptions from './components/SortOptions'; // --- 추가된 부분 ---
+
+// 카테고리 이름을 URL 경로로 변환하는 헬퍼 함수
+const getPathForCategory = (category: string) => {
+    switch (category) {
+        case '텍스트 처리':
+            return 'text';
+        case '보안/암호화':
+            return 'security';
+        default:
+            return 'encoding';
+    }
+};
 
 const sortOptions = [
     { value: 'name-asc', label: 'Name (A-Z)' },
@@ -23,7 +37,6 @@ export default function IntegrationsPage() {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOption, setSortOption] = useState('name-asc');
-
     const [favorites, setFavorites] = useState<string[]>([]);
 
     useEffect(() => {
@@ -65,9 +78,8 @@ export default function IntegrationsPage() {
     }, [selectedCategory, searchQuery, sortOption]);
 
     const handleSelectTool = (tool: Integration) => {
-        // 수정: tool에 Integration 타입 명시
-        const destination = `/encoding/${tool.id}?category=${encodeURIComponent(selectedCategory)}`;
-        router.push(destination);
+        const path = `/${getPathForCategory(tool.category)}/${tool.id}`;
+        router.push(path);
     };
 
     return (

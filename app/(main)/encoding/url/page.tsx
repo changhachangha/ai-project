@@ -4,15 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useEncoding } from '@/hooks/useEncoding';
-// --- 수정: useState와 useEffect를 추가로 import ---
 import { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
-// 실제로는 shadcn/ui에서 Checkbox를 추가해서 사용하는 것이 좋습니다.
-// npm install @radix-ui/react-checkbox
-// npx shadcn-ui@latest add checkbox
+import { Label } from '@/components/ui/label';
 
 export default function UrlTool() {
-    // --- 수정: 실시간 변환 상태 추가 ---
     const [isRealtime, setIsRealtime] = useState(true);
 
     const { input, setInput, output, setOutput, mode, setMode, handleEncode, handleDecode, handleClear, handleCopy } =
@@ -37,7 +33,7 @@ export default function UrlTool() {
                 setOutput('유효하지 않은 입력입니다.');
             }
         }
-    }, [input, mode, isRealtime]); // handleEncode와 handleDecode를 의존성에서 제거
+    }, [input, mode, isRealtime, setOutput]); // --- 수정: setOutput 의존성 추가 ---
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -74,23 +70,19 @@ export default function UrlTool() {
                             className="min-h-[200px] mb-4 font-mono"
                         />
 
-                        {/* --- 수정: 실시간 변환 체크박스와 변환 버튼 UI --- */}
                         <div className="flex justify-between items-center mt-4">
-                            {' '}
-                            {/* mt-4 추가 */}
                             <div className="flex items-center space-x-2">
-                                {/* --- 수정: input 태그를 Checkbox 컴포넌트로 변경 --- */}
                                 <Checkbox
                                     id="realtime-checkbox"
                                     checked={isRealtime}
                                     onCheckedChange={(checked: unknown) => setIsRealtime(Boolean(checked))}
                                 />
-                                <label
+                                <Label
                                     htmlFor="realtime-checkbox"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
                                     실시간 변환
-                                </label>
+                                </Label>
                             </div>
                             {!isRealtime && (
                                 <Button onClick={mode === 'encode' ? handleEncode : handleDecode}>
