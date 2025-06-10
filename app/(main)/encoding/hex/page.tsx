@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Hash } from 'lucide-react';
 import { useState } from 'react';
 
 export default function HexTool() {
@@ -50,16 +49,6 @@ export default function HexTool() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center gap-3 mb-8">
-                <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: '#9C27B020' }}
-                >
-                    <Hash className="w-6 h-6" style={{ color: '#9C27B0' }} />
-                </div>
-                <h1 className="text-3xl font-bold">Hex(Base16) 변환기</h1>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card>
                     <CardContent className="p-6">

@@ -50,27 +50,23 @@ export const useEncoding = ({
         }
     }, [output]);
 
-    const handleSwitchMode = useCallback(
-        (newMode: 'encode' | 'decode') => {
-            // 수정: 모드 전환 시 input과 output을 서로 바꾸는 로직 활성화
-            const temp = input;
-            setInput(output === defaultOutput ? '' : output);
-            setOutput(temp === '' ? defaultOutput : temp);
-            setMode(newMode);
-        },
-        [input, output, defaultOutput]
-    ); // 수정: 의존성 배열에 output, defaultOutput 추가
+    const swapInputOutput = useCallback(() => {
+        const temp = input;
+        setInput(output === defaultOutput ? '' : output);
+        setOutput(temp === '' ? defaultOutput : temp);
+    }, [input, output, defaultOutput]);
 
     return {
         input,
         setInput,
         output,
-        setOutput, // 수정: setOutput 추가
+        setOutput,
         mode,
-        setMode: handleSwitchMode,
+        setMode, // 이제 순수 상태 변경 함수를 반환
         handleEncode,
         handleDecode,
         handleClear,
         handleCopy,
+        swapInputOutput, // 새로 추가된 함수
     };
 };

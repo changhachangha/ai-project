@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useEncoding } from '@/hooks/useEncoding';
-import { FileCode, Upload } from 'lucide-react';
+import { Upload } from 'lucide-react';
 // --- 수정: useRef를 추가로 import 합니다 ---
 import React, { useRef } from 'react';
 
@@ -62,16 +62,6 @@ export default function Base64Tool() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center gap-3 mb-8">
-                <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: '#4CAF5020' }}
-                >
-                    <FileCode className="w-6 h-6" style={{ color: '#4CAF50' }} />
-                </div>
-                <h1 className="text-3xl font-bold">Base64 인코더/디코더</h1>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card>
                     <CardContent className="p-6">

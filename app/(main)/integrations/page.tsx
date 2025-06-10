@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { Integration } from '../../data/types';
 import { allTools } from '../../data/integrations';
 import IntegrationGrid from './components/IntegrationGrid';
@@ -23,6 +23,23 @@ export default function IntegrationsPage() {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOption, setSortOption] = useState('name-asc');
+
+    const [favorites, setFavorites] = useState<string[]>([]);
+
+    useEffect(() => {
+        const savedFavorites = localStorage.getItem('favoriteIntegrations');
+        if (savedFavorites) {
+            setFavorites(JSON.parse(savedFavorites));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('favoriteIntegrations', JSON.stringify(favorites));
+    }, [favorites]);
+
+    const handleToggleFavorite = (id: string) => {
+        setFavorites((prev) => (prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]));
+    };
 
     const sortedAndFilteredTools = useMemo(() => {
         const filtered = allTools.filter((tool) => {
@@ -75,8 +92,8 @@ export default function IntegrationsPage() {
                 <IntegrationGrid
                     integrations={sortedAndFilteredTools}
                     onSelectIntegration={handleSelectTool}
-                    favorites={[]}
-                    onToggleFavorite={() => {}}
+                    favorites={favorites}
+                    onToggleFavorite={handleToggleFavorite}
                 />
             </div>
         </div>

@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { FileText } from 'lucide-react';
 import { useState } from 'react';
 
 const htmlEntities: { [key: string]: string } = {
@@ -53,16 +52,6 @@ export default function HtmlTool() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center gap-3 mb-8">
-                <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: '#F4433620' }}
-                >
-                    <FileText className="w-6 h-6" style={{ color: '#F44336' }} />
-                </div>
-                <h1 className="text-3xl font-bold">HTML 인코더/디코더</h1>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card>
                     <CardContent className="p-6">

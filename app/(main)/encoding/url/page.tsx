@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useEncoding } from '@/hooks/useEncoding';
-import { Globe } from 'lucide-react';
 // --- 수정: useState와 useEffect를 추가로 import ---
 import { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -16,36 +15,32 @@ export default function UrlTool() {
     // --- 수정: 실시간 변환 상태 추가 ---
     const [isRealtime, setIsRealtime] = useState(true);
 
-    const { input, setInput, output, mode, setMode, handleEncode, handleDecode, handleClear, handleCopy } = useEncoding(
-        {
+    const { input, setInput, output, setOutput, mode, setMode, handleEncode, handleDecode, handleClear, handleCopy } =
+        useEncoding({
             encodeFn: encodeURIComponent,
             decodeFn: decodeURIComponent,
-        }
-    );
+        });
 
-    // --- 수정: 실시간 변환을 위한 useEffect 추가 ---
     useEffect(() => {
         if (isRealtime) {
-            if (mode === 'encode') {
-                handleEncode();
-            } else {
-                handleDecode();
+            try {
+                if (input === '') {
+                    setOutput('');
+                    return;
+                }
+                if (mode === 'encode') {
+                    setOutput(encodeURIComponent(input));
+                } else {
+                    setOutput(decodeURIComponent(input));
+                }
+            } catch {
+                setOutput('유효하지 않은 입력입니다.');
             }
         }
-    }, [input, mode, isRealtime, handleEncode, handleDecode]);
+    }, [input, mode, isRealtime]); // handleEncode와 handleDecode를 의존성에서 제거
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center gap-3 mb-8">
-                <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: '#FF980020' }}
-                >
-                    <Globe className="w-6 h-6" style={{ color: '#FF9800' }} />
-                </div>
-                <h1 className="text-3xl font-bold">URL 인코더/디코더</h1>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card>
                     <CardContent className="p-6">

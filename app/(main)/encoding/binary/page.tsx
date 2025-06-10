@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Binary } from 'lucide-react';
 import { useState } from 'react';
 
 type BaseType = '2' | '8' | '10' | '16';
@@ -53,16 +52,6 @@ export default function BinaryTool() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex items-center gap-3 mb-8">
-                <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: '#607D8B20' }}
-                >
-                    <Binary className="w-6 h-6" style={{ color: '#607D8B' }} />
-                </div>
-                <h1 className="text-3xl font-bold">진수 변환기</h1>
-            </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <Card>
                     <CardContent className="p-6">
