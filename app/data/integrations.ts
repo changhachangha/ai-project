@@ -1,14 +1,11 @@
 import { encodingTools } from './encoding-tools';
 import { textTools } from './text-tools';
 import { securityTools } from './security-tools';
+import { conversionTools } from './conversion-tools';
 import type { Integration } from './types';
 
 // 모든 도구들을 합칩니다.
-export const allTools: Integration[] = [
-  ...encodingTools,
-  ...textTools,
-  ...securityTools,
-];
+export const allTools: Integration[] = [...encodingTools, ...textTools, ...securityTools, ...conversionTools];
 
 // 모든 도구들을 카테고리별로 그룹화합니다.
 export const groupedTools = allTools.reduce((acc, tool) => {

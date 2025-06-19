@@ -45,8 +45,23 @@ export const useEncoding = ({
     }, []);
 
     const handleCopy = useCallback(() => {
+        if (typeof window === 'undefined') {
+            // 브라우저 환경이 아님
+            return;
+        }
+
+        const nav = window.navigator;
+        if (!nav || !nav.clipboard) {
+            console.warn('클립보드 API를 사용할 수 없습니다. 복사할 수 없습니다.');
+            return;
+        }
+
         if (output && output !== '결과가 여기에 표시됩니다.') {
-            navigator.clipboard.writeText(output);
+            if (typeof nav.clipboard.writeText === 'function') {
+                nav.clipboard.writeText(output);
+            } else {
+                console.warn('클립보드 API의 writeText 함수를 사용할 수 없습니다.');
+            }
         }
     }, [output]);
 
