@@ -19,12 +19,17 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, toggle
         { id: 'timestamp', name: 'Timestamp Converter' },
         { id: 'color', name: 'Color Converter' },
         { id: 'diff', name: 'Text Diff Tool' },
+        { id: 'public-key-extractor', name: 'Public Key Extractor' },
     ];
 
     const filteredTools = tools.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const handleToolSelect = (toolId: string) => {
-        router.push(`/(main)/tools/${toolId}`);
+        if (toolId === 'public-key-extractor') {
+            router.push(`/(main)/security/${toolId}`);
+        } else {
+            router.push(`/(main)/tools/${toolId}`);
+        }
         onClose();
     };
 

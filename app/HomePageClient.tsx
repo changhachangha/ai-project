@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Integration } from './data/types';
 import { useRouter } from 'next/navigation';
 import { allTools } from './data/integrations';
-import CategoryFilter from '@/app/(main)/integrations/components/CategoryFilter';
 import FeaturedIntegrations from '@/app/(main)/integrations/components/FeaturedIntegrations';
 import IntegrationGrid from '@/app/(main)/integrations/components/IntegrationGrid';
 import Pagination from '@/app/(main)/integrations/components/Pagination';
@@ -14,6 +13,7 @@ import SortOptions from '@/app/(main)/integrations/components/SortOptions';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
+import { useSidebar } from '@/lib/context/SidebarContext';
 
 const MotionH1 = dynamic(() => import('framer-motion').then((mod) => mod.motion.h1), { ssr: false });
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
@@ -43,7 +43,7 @@ export default function HomePageClient() {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState('name-asc');
     const [favorites, setFavorites] = useState<string[]>([]);
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const { setSidebarOpen } = useSidebar();
 
     useEffect(() => {
         const savedFavorites = localStorage.getItem('favoriteIntegrations');
@@ -92,18 +92,6 @@ export default function HomePageClient() {
         return allTools.filter((integration) => favorites.includes(integration.id));
     }, [favorites]);
 
-    const groupedTools = useMemo(() => {
-        return allTools.reduce((acc, tool) => {
-            let group = acc.find((g) => g.category === tool.category);
-            if (!group) {
-                group = { category: tool.category, tools: [] };
-                acc.push(group);
-            }
-            group.tools.push(tool);
-            return acc;
-        }, [] as { category: string; tools: Integration[] }[]);
-    }, []);
-
     const totalPages = Math.ceil(sortedAndFilteredTools.length / ITEMS_PER_PAGE);
     const paginatedIntegrations = sortedAndFilteredTools.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -117,7 +105,6 @@ export default function HomePageClient() {
 
     return (
         <div className='flex h-screen bg-gray-100 overflow-hidden'>
-            <CategoryFilter groupedTools={groupedTools} isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
             <main className='flex-1 flex flex-col overflow-y-auto'>
                 <div className='flex-1 p-4 md:p-6 space-y-4'>
                     <header className='flex items-center gap-4'>

@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import React, { useState, useCallback } from 'react';
 import './globals.css';
 import CommandPalette from '@/components/command-palette/CommandPalette';
+import { SidebarProvider } from '@/lib/context/SidebarContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,12 +38,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang='en'>
             <body className={inter.className}>
-                {children}
-                <CommandPalette
-                    isOpen={isCommandPaletteOpen}
-                    onClose={() => setIsCommandPaletteOpen(false)}
-                    togglePalette={toggleCommandPalette}
-                />
+                <SidebarProvider>
+                    {children}
+                    <CommandPalette
+                        isOpen={isCommandPaletteOpen}
+                        onClose={() => setIsCommandPaletteOpen(false)}
+                        togglePalette={toggleCommandPalette}
+                    />
+                </SidebarProvider>
             </body>
         </html>
     );

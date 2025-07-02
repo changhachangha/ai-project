@@ -69,3 +69,24 @@ export interface DiffToolOutput {
     diffResult: string; // e.g., a unified diff format
     errorMessage?: string;
 }
+
+export interface CryptoToolInput {
+    privateKey: string;
+    keyFormat: 'pem' | 'pkcs8' | 'auto';
+}
+
+export interface CryptoToolOptions {
+    outputFormat: 'pem' | 'der' | 'jwk' | 'hex';
+    keyType: 'rsa' | 'ecdsa' | 'auto';
+}
+
+export interface CryptoToolOutput {
+    publicKey: string;
+    keyInfo: {
+        keyType: string;
+        keySize?: number;
+        curve?: string;
+    };
+    isValid: boolean;
+    errorMessage?: string;
+}

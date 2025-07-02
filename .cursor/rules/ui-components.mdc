@@ -1,0 +1,374 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# UI Components & Design System Rules
+
+## 🎨 shadcn/ui Component System
+
+### Configuration Reference
+- Config file: [components.json](mdc:components.json)
+- Style: **New York** variant
+- Base color: **Neutral** palette
+- CSS Variables: **Enabled** for dynamic theming
+- Icon library: **Lucide React**
+
+### Core UI Components Location
+All reusable UI components are located in [components/ui/](mdc:components/ui/) directory:
+- [Button](mdc:components/ui/button.tsx) - Primary interaction component
+- [Card](mdc:components/ui/card.tsx) - Content containers
+- [Dialog](mdc:components/ui/dialog.tsx) - Modal overlays
+- [Input](mdc:components/ui/input.tsx) - Form inputs
+- [Textarea](mdc:components/ui/textarea.tsx) - Multi-line text input
+- [Select](mdc:components/ui/select.tsx) - Dropdown selections
+- [Tabs](mdc:components/ui/tabs.tsx) - Content organization
+- [Checkbox](mdc:components/ui/checkbox.tsx) - Boolean inputs
+- [Label](mdc:components/ui/label.tsx) - Form labels
+
+## 🎯 CRITICAL UI RULES
+
+### ✅ ALWAYS DO - UI Components
+
+1. **Use existing shadcn/ui components** - Never recreate what already exists
+2. **Import from `@/components/ui/`** - Use absolute imports for UI components
+3. **Use `cn()` utility** - Combine classes properly with [lib/utils.ts](mdc:lib/utils.ts)
+4. **Follow component variants** - Use built-in variant systems (size, color, etc.)
+5. **Maintain consistent spacing** - Use Tailwind's spacing scale (4px increments)
+6. **Apply proper ARIA attributes** - Ensure accessibility compliance
+7. **Use CSS variables** - Leverage the design token system from [app/globals.css](mdc:app/globals.css)
+8. **Implement proper focus states** - Ensure keyboard navigation works
+9. **Support both themes** - Test in light and dark modes
+10. **Use semantic HTML** - Choose appropriate HTML elements
+
+### ❌ NEVER DO - UI Components
+
+1. **DON'T create custom buttons** - Use the existing Button component with variants
+2. **DON'T use hardcoded colors** - Always use CSS variables or Tailwind color classes
+3. **DON'T ignore component props** - Utilize all available props and variants
+4. **DON'T break the design system** - Maintain visual consistency
+5. **DON'T create unstyled components** - Apply proper styling to all elements
+6. **DON'T use deprecated HTML** - Avoid non-semantic elements like `<div>` for buttons
+7. **DON'T skip accessibility** - Always include proper ARIA labels and roles
+8. **DON'T use inline styles** - Use Tailwind classes or CSS variables only
+9. **DON'T create one-off components** - Make components reusable when possible
+10. **DON'T ignore responsive design** - Ensure components work on all screen sizes
+
+## 🧩 Component Usage Patterns
+
+### Button Component
+```typescript
+import { Button } from '@/components/ui/button';
+
+// Primary button (default)
+<Button onClick={handleClick}>Primary Action</Button>
+
+// Secondary button
+<Button variant="secondary">Secondary Action</Button>
+
+// Destructive button
+<Button variant="destructive">Delete Item</Button>
+
+// Button with icon
+<Button>
+  <Plus className="mr-2 h-4 w-4" />
+  Add Item
+</Button>
+
+// Loading state
+<Button disabled={isLoading}>
+  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+  {isLoading ? 'Processing...' : 'Submit'}
+</Button>
+```
+
+### Card Component
+```typescript
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+
+<Card>
+  <CardHeader>
+    <CardTitle>Tool Name</CardTitle>
+    <CardDescription>Brief description of the tool</CardDescription>
+  </CardHeader>
+  <CardContent>
+    {/* Main content */}
+  </CardContent>
+</Card>
+```
+
+### Form Components
+```typescript
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+
+<div className="space-y-2">
+  <Label htmlFor="input-field">Input Label</Label>
+  <Input
+    id="input-field"
+    type="text"
+    placeholder="Enter text..."
+    value={value}
+    onChange={(e) => setValue(e.target.value)}
+  />
+</div>
+
+<div className="space-y-2">
+  <Label htmlFor="textarea-field">Textarea Label</Label>
+  <Textarea
+    id="textarea-field"
+    placeholder="Enter longer text..."
+    value={text}
+    onChange={(e) => setText(e.target.value)}
+    rows={4}
+  />
+</div>
+```
+
+### Dialog Component
+```typescript
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">Open Dialog</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Dialog Title</DialogTitle>
+    </DialogHeader>
+    {/* Dialog content */}
+  </DialogContent>
+</Dialog>
+```
+
+## 🎨 Styling Guidelines
+
+### CSS Variables Usage
+Use the CSS variables defined in [app/globals.css](mdc:app/globals.css):
+
+```css
+/* Background colors */
+bg-background      /* Main background */
+bg-card           /* Card backgrounds */
+bg-popover        /* Popover backgrounds */
+
+/* Text colors */
+text-foreground   /* Primary text */
+text-muted-foreground /* Secondary text */
+
+/* Border colors */
+border-border     /* Default borders */
+border-input      /* Input borders */
+
+/* State colors */
+bg-primary        /* Primary actions */
+bg-secondary      /* Secondary actions */
+bg-destructive    /* Destructive actions */
+```
+
+### Responsive Design Patterns
+```typescript
+// Mobile-first responsive grid
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  {items.map(item => (
+    <Card key={item.id} className="w-full">
+      {/* Card content */}
+    </Card>
+  ))}
+</div>
+
+// Responsive text sizing
+<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+  Responsive Heading
+</h1>
+
+// Responsive padding
+<div className="p-4 sm:p-6 lg:p-8">
+  {/* Content with responsive padding */}
+</div>
+```
+
+### Component Composition
+```typescript
+// Combining components effectively
+<Card className="w-full max-w-md mx-auto">
+  <CardHeader className="text-center">
+    <CardTitle className="text-2xl font-bold">Welcome</CardTitle>
+    <CardDescription>Sign in to your account</CardDescription>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    <div className="space-y-2">
+      <Label htmlFor="email">Email</Label>
+      <Input id="email" type="email" placeholder="Enter your email" />
+    </div>
+    <div className="space-y-2">
+      <Label htmlFor="password">Password</Label>
+      <Input id="password" type="password" placeholder="Enter your password" />
+    </div>
+    <Button className="w-full">Sign In</Button>
+  </CardContent>
+</Card>
+```
+
+## 🔧 Custom Component Development
+
+### When to Create Custom Components
+1. **Combining multiple UI components** into a specific pattern
+2. **Business logic integration** with UI components
+3. **Reusable layouts** that appear in multiple places
+4. **Complex interactions** that require custom state management
+
+### Custom Component Template
+```typescript
+'use client';
+
+import { forwardRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+interface CustomComponentProps {
+  className?: string;
+  variant?: 'default' | 'compact';
+  children?: React.ReactNode;
+  onAction?: () => void;
+}
+
+const CustomComponent = forwardRef<HTMLDivElement, CustomComponentProps>(
+  ({ className, variant = 'default', children, onAction, ...props }, ref) => {
+    return (
+      <Card
+        ref={ref}
+        className={cn(
+          "w-full",
+          variant === 'compact' && "p-2",
+          className
+        )}
+        {...props}
+      >
+        <CardContent className="space-y-4">
+          {children}
+          {onAction && (
+            <Button onClick={onAction} className="w-full">
+              Action
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+);
+
+CustomComponent.displayName = 'CustomComponent';
+
+export { CustomComponent };
+```
+
+## 🌙 Theme System
+
+### Dark Mode Implementation
+The project uses class-based dark mode with CSS variables:
+
+```typescript
+// Theme toggle logic (if implementing)
+const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+useEffect(() => {
+  const root = document.documentElement;
+  if (theme === 'dark') {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
+}, [theme]);
+```
+
+### Color Tokens
+All colors use OKLCH color space for better perceptual uniformity:
+- Light mode: High contrast, clean backgrounds
+- Dark mode: Reduced eye strain, proper contrast ratios
+
+## 📱 Mobile Optimization
+
+### Touch-Friendly Design
+```typescript
+// Proper button sizing for mobile
+<Button className="h-12 px-6 text-base"> {/* Minimum 44px touch target */}
+  Mobile Button
+</Button>
+
+// Responsive dialog
+<DialogContent className="w-[95vw] max-w-md mx-auto">
+  {/* Mobile-optimized dialog */}
+</DialogContent>
+
+// Mobile-friendly form spacing
+<div className="space-y-6"> {/* Larger spacing on mobile */}
+  {/* Form fields */}
+</div>
+```
+
+### Performance Considerations
+```typescript
+// Lazy load heavy components
+const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
+  loading: () => <div className="animate-pulse bg-muted h-32 rounded" />
+});
+
+// Optimize re-renders with React.memo
+const OptimizedCard = React.memo(({ data }: { data: CardData }) => (
+  <Card>
+    <CardContent>{data.content}</CardContent>
+  </Card>
+));
+```
+
+## 🔍 Accessibility Guidelines
+
+### ARIA Implementation
+```typescript
+// Proper labeling
+<Button aria-label="Close dialog" onClick={onClose}>
+  <X className="h-4 w-4" />
+</Button>
+
+// Form accessibility
+<div>
+  <Label htmlFor="search" className="sr-only">Search tools</Label>
+  <Input
+    id="search"
+    type="search"
+    placeholder="Search tools..."
+    aria-describedby="search-help"
+  />
+  <div id="search-help" className="sr-only">
+    Search through available developer tools
+  </div>
+</div>
+
+// Loading states
+<Button disabled={isLoading} aria-busy={isLoading}>
+  {isLoading ? 'Processing...' : 'Submit'}
+</Button>
+```
+
+### Keyboard Navigation
+- Ensure all interactive elements are focusable
+- Provide visible focus indicators
+- Support standard keyboard shortcuts (Tab, Enter, Escape)
+- Implement proper focus management in modals
+
+## 🧪 Component Testing
+
+### Manual Testing Checklist
+- [ ] Component renders in both light and dark themes
+- [ ] All interactive elements respond to clicks/touches
+- [ ] Keyboard navigation works properly
+- [ ] Focus indicators are visible
+- [ ] Component is responsive across screen sizes
+- [ ] Loading and error states display correctly
+- [ ] ARIA attributes are properly implemented
+
+Remember: **Consistency is key** - Follow the established patterns and design system to maintain a cohesive user experience across the entire application.
