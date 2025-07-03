@@ -20,12 +20,13 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, toggle
         { id: 'color', name: 'Color Converter' },
         { id: 'diff', name: 'Text Diff Tool' },
         { id: 'public-key-extractor', name: '공개키 추출기' },
+        { id: 'hash-tool', name: '해시 생성기' },
     ];
 
     const filteredTools = tools.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const handleToolSelect = (toolId: string) => {
-        if (toolId === 'public-key-extractor') {
+        if (toolId === 'public-key-extractor' || toolId === 'hash-tool') {
             router.push(`/(main)/security/${toolId}`);
         } else {
             router.push(`/(main)/tools/${toolId}`);

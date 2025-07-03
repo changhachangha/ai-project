@@ -89,3 +89,22 @@ export interface CryptoToolOutput {
     isValid: boolean;
     errorMessage?: string;
 }
+
+export interface HashToolInput {
+    text: string;
+    algorithm: 'sha256' | 'sha512' | 'md5' | 'sha1';
+}
+
+export interface HashToolOptions {
+    outputFormat: 'hex' | 'base64';
+    compareHash?: string; // 검증할 해시값
+}
+
+export interface HashToolOutput {
+    hash: string;
+    algorithm: string;
+    outputFormat: string;
+    isValid: boolean;
+    isMatch?: boolean; // 해시 검증 결과
+    errorMessage?: string;
+}
