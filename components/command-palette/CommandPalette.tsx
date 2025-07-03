@@ -19,7 +19,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, toggle
         { id: 'timestamp', name: 'Timestamp Converter' },
         { id: 'color', name: 'Color Converter' },
         { id: 'diff', name: 'Text Diff Tool' },
-        { id: 'public-key-extractor', name: 'Public Key Extractor' },
+        { id: 'public-key-extractor', name: '공개키 추출기' },
     ];
 
     const filteredTools = tools.filter((tool) => tool.name.toLowerCase().includes(searchTerm.toLowerCase()));

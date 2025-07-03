@@ -85,7 +85,6 @@ export interface CryptoToolOutput {
     keyInfo: {
         keyType: string;
         keySize?: number;
-        curve?: string;
     };
     isValid: boolean;
     errorMessage?: string;
