@@ -18,6 +18,9 @@ const getPathForCategory = (category: string) => {
             return 'text';
         case '보안/암호화':
             return 'security';
+        case '시간/날짜':
+        case '색상':
+            return 'conversion';
         default:
             return 'encoding';
     }
@@ -83,9 +86,9 @@ export default function IntegrationsPage() {
     };
 
     return (
-        <div className="p-4 md:p-6 space-y-4">
+        <div className='p-4 md:p-6 space-y-4'>
             <motion.h1
-                className="text-2xl font-bold"
+                className='text-2xl font-bold'
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -93,14 +96,14 @@ export default function IntegrationsPage() {
                 Developer Tools
             </motion.h1>
 
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
                 <SearchBar onSearch={setSearchQuery} />
-                <div className="flex items-center gap-4">
+                <div className='flex items-center gap-4'>
                     <SortOptions options={sortOptions} selectedOption={sortOption} onSelectOption={setSortOption} />
                 </div>
             </div>
 
-            <div className="flex-1 overflow-auto mt-4">
+            <div className='flex-1 overflow-auto mt-4'>
                 <IntegrationGrid
                     integrations={sortedAndFilteredTools}
                     onSelectIntegration={handleSelectTool}

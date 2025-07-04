@@ -24,6 +24,9 @@ const getPathForCategory = (category: string) => {
             return 'text';
         case '보안/암호화':
             return 'security';
+        case '시간/날짜':
+        case '색상':
+            return 'conversion';
         default:
             return 'encoding';
     }
@@ -104,20 +107,20 @@ export default function HomePageClient() {
     };
 
     return (
-        <div className='flex h-screen bg-gray-100 overflow-hidden'>
+        <div className='flex h-screen bg-background overflow-hidden'>
             <main className='flex-1 flex flex-col overflow-y-auto'>
                 <div className='flex-1 p-4 md:p-6 space-y-4'>
                     <header className='flex items-center gap-4'>
                         <Button
                             variant='outline'
                             size='icon'
-                            className='md:hidden'
+                            className='md:hidden border-border text-foreground hover:bg-accent hover:text-accent-foreground'
                             onClick={() => setSidebarOpen(true)}
                         >
                             <Menu className='h-5 w-5' />
                         </Button>
                         <MotionH1
-                            className='text-2xl font-bold'
+                            className='text-2xl font-bold text-foreground'
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
@@ -151,9 +154,19 @@ export default function HomePageClient() {
                     </div>
 
                     <Tabs defaultValue='all' className='w-full'>
-                        <TabsList>
-                            <TabsTrigger value='all'>All Items</TabsTrigger>
-                            <TabsTrigger value='favorites'>Favorites ({favoriteIntegrations.length})</TabsTrigger>
+                        <TabsList className='bg-muted border-border'>
+                            <TabsTrigger
+                                value='all'
+                                className='text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground'
+                            >
+                                All Items
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value='favorites'
+                                className='text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground'
+                            >
+                                Favorites ({favoriteIntegrations.length})
+                            </TabsTrigger>
                         </TabsList>
                         <TabsContent value='all' className='mt-4'>
                             <div className='overflow-auto'>
@@ -182,8 +195,8 @@ export default function HomePageClient() {
                                 />
                             ) : (
                                 <div className='text-center py-10'>
-                                    <p className='text-gray-500'>No favorite items yet.</p>
-                                    <p className='text-sm text-gray-400 mt-2'>
+                                    <p className='text-muted-foreground'>No favorite items yet.</p>
+                                    <p className='text-sm text-muted-foreground mt-2'>
                                         Click the heart icon on any item to add it to your favorites.
                                     </p>
                                 </div>

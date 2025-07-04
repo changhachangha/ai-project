@@ -17,6 +17,9 @@ const getPathForCategory = (category: string) => {
             return 'text';
         case '보안/암호화':
             return 'security';
+        case '시간/날짜':
+        case '색상':
+            return 'conversion';
         default:
             return 'encoding';
     }
@@ -56,25 +59,30 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
             router.push(path);
             onClose();
         },
-        [router, onClose, pathname]
+        [router, onClose]
     );
 
     const SidebarContent = useMemo(() => {
         const InnerSidebarContent = () => (
             <>
-                <div className='flex justify-between items-center p-4 md:hidden'>
-                    <h2 className='text-lg font-semibold'>Tools</h2>
-                    <Button variant='ghost' size='icon' onClick={onClose}>
+                <div className='flex justify-between items-center p-4 md:hidden border-b border-sidebar-border'>
+                    <h2 className='text-lg font-semibold text-sidebar-foreground'>Tools</h2>
+                    <Button
+                        variant='ghost'
+                        size='icon'
+                        onClick={onClose}
+                        className='text-sidebar-foreground hover:bg-sidebar-accent'
+                    >
                         <X className='h-5 w-5' />
                     </Button>
                 </div>
-                <h2 className='text-lg font-semibold mb-2 px-4 pt-4 hidden md:block'>Tools</h2>
+                <h2 className='text-lg font-semibold mb-2 px-4 pt-4 hidden md:block text-sidebar-foreground'>Tools</h2>
                 <div className='flex-1 overflow-auto space-y-1 p-4 md:p-0 md:px-4'>
                     {groupedTools.map(({ category, tools }) => (
                         <div key={category}>
                             <Button
                                 variant='ghost'
-                                className='w-full justify-between text-sm font-semibold py-1 px-2 h-auto'
+                                className='w-full justify-between text-sm font-semibold py-1 px-2 h-auto text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                                 onClick={() => setOpenCategory((prev) => (prev === category ? null : category))}
                             >
                                 {category}
@@ -94,7 +102,7 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
                                         animate={{ opacity: 1, height: 'auto' }}
                                         exit={{ opacity: 0, height: 0 }}
                                         transition={{ duration: 0.3, ease: 'easeInOut' }}
-                                        className='pl-4 mt-1 space-y-1 border-l-2 ml-3 overflow-hidden'
+                                        className='pl-4 mt-1 space-y-1 border-l-2 border-sidebar-border ml-3 overflow-hidden'
                                     >
                                         {tools.map((tool) => (
                                             <Button
@@ -102,9 +110,9 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
                                                 variant='ghost'
                                                 size='sm'
                                                 className={cn(
-                                                    'w-full justify-start font-normal text-muted-foreground hover:bg-accent',
+                                                    'w-full justify-start font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
                                                     pathname.endsWith(`/${tool.id}`) &&
-                                                        'bg-primary text-primary-foreground font-semibold hover:bg-primary/90'
+                                                        'bg-sidebar-primary text-sidebar-primary-foreground font-semibold hover:bg-sidebar-primary/90'
                                                 )}
                                                 // --- 수정: tool 객체 전체를 전달 ---
                                                 onClick={() => handleLinkClick(tool)}
@@ -145,14 +153,14 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
                         animate={{ x: '0%' }}
                         exit={{ x: '-100%' }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                        className='fixed top-0 left-0 h-full w-64 bg-white shadow-lg flex flex-col z-50 md:hidden'
+                        className='fixed top-0 left-0 h-full w-64 bg-sidebar border-r border-sidebar-border shadow-lg flex flex-col z-50 md:hidden'
                     >
                         <SidebarContent />
                     </motion.aside>
                 )}
             </AnimatePresence>
 
-            <aside className='w-64 bg-white shadow-md flex-col h-screen hidden md:flex'>
+            <aside className='w-64 bg-sidebar border-r border-sidebar-border flex-col h-screen hidden md:flex'>
                 <SidebarContent />
             </aside>
         </>

@@ -1,374 +1,607 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
-# UI Components & Design System Rules
+# UI Components & Design System Rules - AI Developer Tools Hub
 
-## 🎨 shadcn/ui Component System
+## 🎨 DESIGN SYSTEM MISSION
+Build a cohesive, accessible, and performant design system using shadcn/ui components with Tailwind CSS. Every UI element must be consistent, responsive, and follow modern design principles.
 
-### Configuration Reference
-- Config file: [components.json](mdc:components.json)
-- Style: **New York** variant
-- Base color: **Neutral** palette
-- CSS Variables: **Enabled** for dynamic theming
-- Icon library: **Lucide React**
+## 🎯 CORE DESIGN PRINCIPLES
 
-### Core UI Components Location
-All reusable UI components are located in [components/ui/](mdc:components/ui/) directory:
-- [Button](mdc:components/ui/button.tsx) - Primary interaction component
-- [Card](mdc:components/ui/card.tsx) - Content containers
-- [Dialog](mdc:components/ui/dialog.tsx) - Modal overlays
-- [Input](mdc:components/ui/input.tsx) - Form inputs
-- [Textarea](mdc:components/ui/textarea.tsx) - Multi-line text input
-- [Select](mdc:components/ui/select.tsx) - Dropdown selections
-- [Tabs](mdc:components/ui/tabs.tsx) - Content organization
-- [Checkbox](mdc:components/ui/checkbox.tsx) - Boolean inputs
-- [Label](mdc:components/ui/label.tsx) - Form labels
+### ✅ MANDATORY DESIGN STANDARDS
 
-## 🎯 CRITICAL UI RULES
+1. **CONSISTENCY IS KING**
+   - Use only shadcn/ui components from [components/ui/](mdc:components/ui)
+   - Apply consistent spacing using Tailwind's 4px scale
+   - Maintain uniform typography across all components
+   - Follow established color system from [app/globals.css](mdc:app/globals.css)
 
-### ✅ ALWAYS DO - UI Components
+2. **ACCESSIBILITY IS NON-NEGOTIABLE**
+   - All interactive elements must be keyboard navigable
+   - Color contrast must meet WCAG AA standards
+   - ARIA labels required for complex components
+   - Screen reader compatibility tested
 
-1. **Use existing shadcn/ui components** - Never recreate what already exists
-2. **Import from `@/components/ui/`** - Use absolute imports for UI components
-3. **Use `cn()` utility** - Combine classes properly with [lib/utils.ts](mdc:lib/utils.ts)
-4. **Follow component variants** - Use built-in variant systems (size, color, etc.)
-5. **Maintain consistent spacing** - Use Tailwind's spacing scale (4px increments)
-6. **Apply proper ARIA attributes** - Ensure accessibility compliance
-7. **Use CSS variables** - Leverage the design token system from [app/globals.css](mdc:app/globals.css)
-8. **Implement proper focus states** - Ensure keyboard navigation works
-9. **Support both themes** - Test in light and dark modes
-10. **Use semantic HTML** - Choose appropriate HTML elements
+3. **PERFORMANCE FIRST**
+   - Use optimized span elements instead of Badge components in lists
+   - Implement proper loading states for all async operations
+   - Apply memoization to prevent unnecessary re-renders
+   - Optimize for Core Web Vitals
 
-### ❌ NEVER DO - UI Components
+### ❌ DESIGN SYSTEM VIOLATIONS (NEVER DO)
 
-1. **DON'T create custom buttons** - Use the existing Button component with variants
-2. **DON'T use hardcoded colors** - Always use CSS variables or Tailwind color classes
-3. **DON'T ignore component props** - Utilize all available props and variants
-4. **DON'T break the design system** - Maintain visual consistency
-5. **DON'T create unstyled components** - Apply proper styling to all elements
-6. **DON'T use deprecated HTML** - Avoid non-semantic elements like `<div>` for buttons
-7. **DON'T skip accessibility** - Always include proper ARIA labels and roles
-8. **DON'T use inline styles** - Use Tailwind classes or CSS variables only
-9. **DON'T create one-off components** - Make components reusable when possible
-10. **DON'T ignore responsive design** - Ensure components work on all screen sizes
+1. **NEVER use hardcoded colors** - Always use CSS variables
+2. **NEVER create custom UI components** - Use shadcn/ui first
+3. **NEVER ignore responsive design** - Mobile-first approach mandatory
+4. **NEVER skip accessibility attributes** - ARIA labels required
+5. **NEVER use inline styles** - Tailwind classes only
+6. **NEVER use Badge components in performance-critical lists**
 
-## 🧩 Component Usage Patterns
+## 🎨 COLOR SYSTEM
 
-### Button Component
-```typescript
-import { Button } from '@/components/ui/button';
-
-// Primary button (default)
-<Button onClick={handleClick}>Primary Action</Button>
-
-// Secondary button
-<Button variant="secondary">Secondary Action</Button>
-
-// Destructive button
-<Button variant="destructive">Delete Item</Button>
-
-// Button with icon
-<Button>
-  <Plus className="mr-2 h-4 w-4" />
-  Add Item
-</Button>
-
-// Loading state
-<Button disabled={isLoading}>
-  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-  {isLoading ? 'Processing...' : 'Submit'}
-</Button>
-```
-
-### Card Component
-```typescript
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-
-<Card>
-  <CardHeader>
-    <CardTitle>Tool Name</CardTitle>
-    <CardDescription>Brief description of the tool</CardDescription>
-  </CardHeader>
-  <CardContent>
-    {/* Main content */}
-  </CardContent>
-</Card>
-```
-
-### Form Components
-```typescript
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-
-<div className="space-y-2">
-  <Label htmlFor="input-field">Input Label</Label>
-  <Input
-    id="input-field"
-    type="text"
-    placeholder="Enter text..."
-    value={value}
-    onChange={(e) => setValue(e.target.value)}
-  />
-</div>
-
-<div className="space-y-2">
-  <Label htmlFor="textarea-field">Textarea Label</Label>
-  <Textarea
-    id="textarea-field"
-    placeholder="Enter longer text..."
-    value={text}
-    onChange={(e) => setText(e.target.value)}
-    rows={4}
-  />
-</div>
-```
-
-### Dialog Component
-```typescript
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-
-<Dialog>
-  <DialogTrigger asChild>
-    <Button variant="outline">Open Dialog</Button>
-  </DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Dialog Title</DialogTitle>
-    </DialogHeader>
-    {/* Dialog content */}
-  </DialogContent>
-</Dialog>
-```
-
-## 🎨 Styling Guidelines
-
-### CSS Variables Usage
-Use the CSS variables defined in [app/globals.css](mdc:app/globals.css):
-
+### CSS Variables (MANDATORY)
 ```css
-/* Background colors */
-bg-background      /* Main background */
-bg-card           /* Card backgrounds */
-bg-popover        /* Popover backgrounds */
+/* From [app/globals.css](mdc:app/globals.css) - ALWAYS use these */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 3.9%;
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 96.1%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96.1%;
+  --muted-foreground: 0 0% 45.1%;
+  --accent: 0 0% 96.1%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 89.8%;
+  --input: 0 0% 89.8%;
+  --ring: 0 0% 3.9%;
+  --radius: 0.5rem;
+}
 
-/* Text colors */
-text-foreground   /* Primary text */
-text-muted-foreground /* Secondary text */
-
-/* Border colors */
-border-border     /* Default borders */
-border-input      /* Input borders */
-
-/* State colors */
-bg-primary        /* Primary actions */
-bg-secondary      /* Secondary actions */
-bg-destructive    /* Destructive actions */
+.dark {
+  --background: 0 0% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 9%;
+  --secondary: 0 0% 14.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 14.9%;
+  --muted-foreground: 0 0% 63.9%;
+  --accent: 0 0% 14.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 14.9%;
+  --input: 0 0% 14.9%;
+  --ring: 0 0% 83.1%;
+}
 ```
 
-### Responsive Design Patterns
+### Color Usage Patterns
 ```typescript
-// Mobile-first responsive grid
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-  {items.map(item => (
-    <Card key={item.id} className="w-full">
-      {/* Card content */}
-    </Card>
-  ))}
+// ✅ CORRECT: Use semantic color classes
+<div className="bg-card text-card-foreground border-border">
+  <p className="text-muted-foreground">Secondary text</p>
+  <Button variant="default" className="bg-primary text-primary-foreground">
+    Primary Action
+  </Button>
 </div>
 
-// Responsive text sizing
-<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
-  Responsive Heading
-</h1>
-
-// Responsive padding
-<div className="p-4 sm:p-6 lg:p-8">
-  {/* Content with responsive padding */}
+// ❌ WRONG: Hardcoded colors
+<div className="bg-white text-black border-gray-200">
+  <p className="text-gray-500">Secondary text</p>
 </div>
 ```
 
-### Component Composition
-```typescript
-// Combining components effectively
-<Card className="w-full max-w-md mx-auto">
-  <CardHeader className="text-center">
-    <CardTitle className="text-2xl font-bold">Welcome</CardTitle>
-    <CardDescription>Sign in to your account</CardDescription>
-  </CardHeader>
-  <CardContent className="space-y-4">
-    <div className="space-y-2">
-      <Label htmlFor="email">Email</Label>
-      <Input id="email" type="email" placeholder="Enter your email" />
-    </div>
-    <div className="space-y-2">
-      <Label htmlFor="password">Password</Label>
-      <Input id="password" type="password" placeholder="Enter your password" />
-    </div>
-    <Button className="w-full">Sign In</Button>
-  </CardContent>
-</Card>
-```
+## 🧩 COMPONENT PATTERNS
 
-## 🔧 Custom Component Development
-
-### When to Create Custom Components
-1. **Combining multiple UI components** into a specific pattern
-2. **Business logic integration** with UI components
-3. **Reusable layouts** that appear in multiple places
-4. **Complex interactions** that require custom state management
-
-### Custom Component Template
+### 1. Tool Page Layout (MANDATORY TEMPLATE)
 ```typescript
 'use client';
 
-import { forwardRef } from 'react';
+import { memo, useState, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Copy, Upload, Download } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface ToolPageProps {
+  title: string;
+  description: string;
+  icon?: React.ReactNode;
+  placeholder?: string;
+  className?: string;
+}
+
+const ToolPage = memo<ToolPageProps>(({ 
+  title, 
+  description, 
+  icon,
+  placeholder = "Enter your input...",
+  className 
+}) => {
+  const [input, setInput] = useState('');
+  const [output, setOutput] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleProcess = useCallback(async () => {
+    if (!input.trim()) {
+      setError('Input cannot be empty');
+      return;
+    }
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      // Tool-specific processing
+      const result = await processInput(input);
+      setOutput(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Processing failed');
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [input]);
+
+  const handleCopy = useCallback(async () => {
+    if (output) {
+      await navigator.clipboard.writeText(output);
+      // Show toast notification
+    }
+  }, [output]);
+
+  return (
+    <div className={cn("container mx-auto p-4 max-w-4xl", className)}>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            {icon}
+            {title}
+          </CardTitle>
+          <p className="text-muted-foreground">{description}</p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Input Section */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Input</label>
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={placeholder}
+              className="min-h-32 resize-none"
+              aria-describedby={error ? "input-error" : undefined}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleProcess} 
+              disabled={isProcessing || !input.trim()}
+              className="flex-1"
+            >
+              {isProcessing ? 'Processing...' : 'Process'}
+            </Button>
+            <Button variant="outline" size="icon" title="Upload file">
+              <Upload className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Error Display */}
+          {error && (
+            <div 
+              id="input-error"
+              className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20"
+              role="alert"
+            >
+              {error}
+            </div>
+          )}
+
+          {/* Output Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Output</label>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleCopy}
+                disabled={!output}
+                className="h-8"
+              >
+                <Copy className="h-4 w-4 mr-1" />
+                Copy
+              </Button>
+            </div>
+            <Textarea
+              value={output}
+              readOnly
+              placeholder="Output will appear here..."
+              className="min-h-32 bg-muted resize-none"
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+});
+
+ToolPage.displayName = 'ToolPage';
+
+export default ToolPage;
+```
+
+### 2. Optimized List Item (PERFORMANCE CRITICAL)
+```typescript
+import { memo, useMemo, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-interface CustomComponentProps {
+interface ListItemProps {
+  item: Integration;
+  onSelect: (id: string) => void;
+  isSelected?: boolean;
   className?: string;
-  variant?: 'default' | 'compact';
-  children?: React.ReactNode;
-  onAction?: () => void;
 }
 
-const CustomComponent = forwardRef<HTMLDivElement, CustomComponentProps>(
-  ({ className, variant = 'default', children, onAction, ...props }, ref) => {
-    return (
-      <Card
-        ref={ref}
-        className={cn(
-          "w-full",
-          variant === 'compact' && "p-2",
-          className
-        )}
-        {...props}
+const OptimizedListItem = memo<ListItemProps>(({ 
+  item, 
+  onSelect, 
+  isSelected = false,
+  className 
+}) => {
+  const handleClick = useCallback(() => {
+    onSelect(item.id);
+  }, [item.id, onSelect]);
+
+  // CRITICAL: Use optimized span elements, NOT Badge components
+  const badges = useMemo(() => {
+    return item.tags.map((tag) => (
+      <span 
+        key={tag}
+        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground"
       >
-        <CardContent className="space-y-4">
-          {children}
-          {onAction && (
-            <Button onClick={onAction} className="w-full">
-              Action
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
-);
+        {tag}
+      </span>
+    ));
+  }, [item.tags]);
 
-CustomComponent.displayName = 'CustomComponent';
-
-export { CustomComponent };
-```
-
-## 🌙 Theme System
-
-### Dark Mode Implementation
-The project uses class-based dark mode with CSS variables:
-
-```typescript
-// Theme toggle logic (if implementing)
-const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-useEffect(() => {
-  const root = document.documentElement;
-  if (theme === 'dark') {
-    root.classList.add('dark');
-  } else {
-    root.classList.remove('dark');
-  }
-}, [theme]);
-```
-
-### Color Tokens
-All colors use OKLCH color space for better perceptual uniformity:
-- Light mode: High contrast, clean backgrounds
-- Dark mode: Reduced eye strain, proper contrast ratios
-
-## 📱 Mobile Optimization
-
-### Touch-Friendly Design
-```typescript
-// Proper button sizing for mobile
-<Button className="h-12 px-6 text-base"> {/* Minimum 44px touch target */}
-  Mobile Button
-</Button>
-
-// Responsive dialog
-<DialogContent className="w-[95vw] max-w-md mx-auto">
-  {/* Mobile-optimized dialog */}
-</DialogContent>
-
-// Mobile-friendly form spacing
-<div className="space-y-6"> {/* Larger spacing on mobile */}
-  {/* Form fields */}
-</div>
-```
-
-### Performance Considerations
-```typescript
-// Lazy load heavy components
-const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
-  loading: () => <div className="animate-pulse bg-muted h-32 rounded" />
+  return (
+    <Card 
+      onClick={handleClick}
+      className={cn(
+        "cursor-pointer transition-colors hover:bg-accent",
+        isSelected && "ring-2 ring-primary ring-offset-2",
+        className
+      )}
+    >
+      <CardContent className="p-4">
+        <h3 className="font-medium text-card-foreground">{item.name}</h3>
+        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+          {item.description}
+        </p>
+        <div className="flex gap-1 flex-wrap mt-3">{badges}</div>
+      </CardContent>
+    </Card>
+  );
 });
 
-// Optimize re-renders with React.memo
-const OptimizedCard = React.memo(({ data }: { data: CardData }) => (
-  <Card>
-    <CardContent>{data.content}</CardContent>
-  </Card>
+OptimizedListItem.displayName = 'OptimizedListItem';
+
+export default OptimizedListItem;
+```
+
+### 3. Loading States (MANDATORY)
+```typescript
+// Skeleton components for loading states
+export const ToolPageSkeleton = memo(() => (
+  <div className="container mx-auto p-4 max-w-4xl">
+    <Card>
+      <CardHeader>
+        <div className="h-6 bg-muted animate-pulse rounded w-1/3" />
+        <div className="h-4 bg-muted animate-pulse rounded w-2/3" />
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <div className="h-4 bg-muted animate-pulse rounded w-16" />
+          <div className="h-32 bg-muted animate-pulse rounded" />
+        </div>
+        <div className="h-10 bg-muted animate-pulse rounded" />
+        <div className="space-y-2">
+          <div className="h-4 bg-muted animate-pulse rounded w-16" />
+          <div className="h-32 bg-muted animate-pulse rounded" />
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+));
+
+export const ListSkeleton = memo(() => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {Array.from({ length: 9 }).map((_, i) => (
+      <Card key={i}>
+        <CardContent className="p-4">
+          <div className="h-5 bg-muted animate-pulse rounded w-3/4 mb-2" />
+          <div className="h-4 bg-muted animate-pulse rounded w-full mb-1" />
+          <div className="h-4 bg-muted animate-pulse rounded w-2/3 mb-3" />
+          <div className="flex gap-1">
+            <div className="h-6 bg-muted animate-pulse rounded w-16" />
+            <div className="h-6 bg-muted animate-pulse rounded w-12" />
+          </div>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
 ));
 ```
 
-## 🔍 Accessibility Guidelines
+## 📱 RESPONSIVE DESIGN RULES
 
-### ARIA Implementation
+### Breakpoint Strategy (MANDATORY)
 ```typescript
-// Proper labeling
-<Button aria-label="Close dialog" onClick={onClose}>
-  <X className="h-4 w-4" />
-</Button>
+// Tailwind breakpoints - ALWAYS use these
+// sm: 640px
+// md: 768px  
+// lg: 1024px
+// xl: 1280px
+// 2xl: 1536px
 
-// Form accessibility
-<div>
-  <Label htmlFor="search" className="sr-only">Search tools</Label>
-  <Input
-    id="search"
-    type="search"
-    placeholder="Search tools..."
-    aria-describedby="search-help"
-  />
-  <div id="search-help" className="sr-only">
-    Search through available developer tools
+// Mobile-first responsive patterns
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  {/* Grid items */}
+</div>
+
+// Responsive text sizing
+<h1 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold">
+  Responsive Heading
+</h1>
+
+// Responsive spacing
+<div className="p-4 md:p-6 lg:p-8">
+  <div className="space-y-4 md:space-y-6 lg:space-y-8">
+    {/* Content */}
   </div>
 </div>
 
-// Loading states
-<Button disabled={isLoading} aria-busy={isLoading}>
-  {isLoading ? 'Processing...' : 'Submit'}
-</Button>
+// Responsive visibility
+<div className="hidden md:block">Desktop only</div>
+<div className="block md:hidden">Mobile only</div>
 ```
 
-### Keyboard Navigation
-- Ensure all interactive elements are focusable
-- Provide visible focus indicators
-- Support standard keyboard shortcuts (Tab, Enter, Escape)
-- Implement proper focus management in modals
+### Container Patterns
+```typescript
+// Standard container with responsive padding
+<div className="container mx-auto px-4 md:px-6 lg:px-8">
+  {/* Content */}
+</div>
 
-## 🧪 Component Testing
+// Max-width containers for different content types
+<div className="max-w-md mx-auto">  {/* Forms */}
+<div className="max-w-2xl mx-auto">  {/* Articles */}
+<div className="max-w-4xl mx-auto">  {/* Tools */}
+<div className="max-w-6xl mx-auto">  {/* Dashboards */}
+<div className="max-w-7xl mx-auto">  {/* Full layouts */}
+```
 
-### Manual Testing Checklist
-- [ ] Component renders in both light and dark themes
-- [ ] All interactive elements respond to clicks/touches
-- [ ] Keyboard navigation works properly
-- [ ] Focus indicators are visible
-- [ ] Component is responsive across screen sizes
-- [ ] Loading and error states display correctly
-- [ ] ARIA attributes are properly implemented
+## 🎭 ANIMATION & TRANSITIONS
 
-Remember: **Consistency is key** - Follow the established patterns and design system to maintain a cohesive user experience across the entire application.
+### Performance-Optimized Animations
+```typescript
+// Use CSS transitions for simple animations
+<Button className="transition-colors duration-200 hover:bg-accent">
+  Hover me
+</Button>
+
+// Loading animations
+<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+<div className="animate-pulse bg-muted h-4 rounded" />
+
+// Entrance animations with Framer Motion (when needed)
+import { motion } from 'framer-motion';
+
+const MotionCard = motion(Card);
+
+<MotionCard
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+>
+  {/* Card content */}
+</MotionCard>
+```
+
+## 🔧 FORM PATTERNS
+
+### Accessible Form Components
+```typescript
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+
+interface FormProps {
+  onSubmit: (data: FormData) => void;
+  isLoading?: boolean;
+}
+
+const AccessibleForm = memo<FormProps>(({ onSubmit, isLoading = false }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    // Validation logic
+    onSubmit(formData);
+  }, [formData, onSubmit]);
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="name">Name *</Label>
+        <Input
+          id="name"
+          value={formData.name}
+          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? "name-error" : undefined}
+          required
+        />
+        {errors.name && (
+          <p id="name-error" className="text-sm text-destructive" role="alert">
+            {errors.name}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="message">Message</Label>
+        <Textarea
+          id="message"
+          value={formData.message}
+          onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+          rows={4}
+          className="resize-none"
+        />
+      </div>
+
+      <Button type="submit" disabled={isLoading} className="w-full">
+        {isLoading ? 'Submitting...' : 'Submit'}
+      </Button>
+    </form>
+  );
+});
+```
+
+## 🎨 THEME INTEGRATION
+
+### Theme-Aware Components
+```typescript
+import { useTheme } from 'next-themes';
+
+const ThemeAwareComponent = memo(() => {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <div className="bg-background text-foreground border border-border rounded-lg p-4">
+      <h3 className="text-lg font-semibold text-foreground">
+        Current theme: {theme}
+      </h3>
+      <div className="flex gap-2 mt-2">
+        <Button 
+          variant={theme === 'light' ? 'default' : 'outline'}
+          onClick={() => setTheme('light')}
+        >
+          Light
+        </Button>
+        <Button 
+          variant={theme === 'dark' ? 'default' : 'outline'}
+          onClick={() => setTheme('dark')}
+        >
+          Dark
+        </Button>
+        <Button 
+          variant={theme === 'system' ? 'default' : 'outline'}
+          onClick={() => setTheme('system')}
+        >
+          System
+        </Button>
+      </div>
+    </div>
+  );
+});
+```
+
+## 📊 COMPONENT TESTING
+
+### UI Component Testing Patterns
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ThemeProvider } from 'next-themes';
+
+// Test wrapper with theme provider
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(
+    <ThemeProvider attribute="class" defaultTheme="light">
+      {component}
+    </ThemeProvider>
+  );
+};
+
+describe('ToolPage Component', () => {
+  it('should render with proper accessibility attributes', () => {
+    renderWithTheme(<ToolPage title="Test Tool" description="Test description" />);
+    
+    expect(screen.getByRole('textbox', { name: /input/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /process/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /output/i })).toBeInTheDocument();
+  });
+
+  it('should handle user interactions correctly', async () => {
+    const mockProcess = jest.fn();
+    renderWithTheme(
+      <ToolPage 
+        title="Test Tool" 
+        description="Test description"
+        onProcess={mockProcess}
+      />
+    );
+
+    const input = screen.getByRole('textbox', { name: /input/i });
+    const processButton = screen.getByRole('button', { name: /process/i });
+
+    fireEvent.change(input, { target: { value: 'test input' } });
+    fireEvent.click(processButton);
+
+    expect(mockProcess).toHaveBeenCalledWith('test input');
+  });
+});
+```
+
+## 🎯 UI QUALITY CHECKLIST
+
+### Pre-deployment UI Validation
+- [ ] All components use shadcn/ui base components
+- [ ] Color system uses CSS variables only
+- [ ] Responsive design tested on all breakpoints
+- [ ] Accessibility attributes present (ARIA labels, roles)
+- [ ] Keyboard navigation functional
+- [ ] Loading states implemented for async operations
+- [ ] Error states properly displayed
+- [ ] Theme switching works correctly
+- [ ] Performance optimizations applied (memoization)
+- [ ] No hardcoded colors or spacing values
+
+### Component Quality Standards
+- [ ] TypeScript interfaces defined for all props
+- [ ] Display names set for all memoized components
+- [ ] Event handlers properly memoized
+- [ ] Computed values use useMemo
+- [ ] Proper semantic HTML structure
+- [ ] Screen reader compatibility tested
+- [ ] Mobile-first responsive design
+- [ ] Consistent spacing and typography
+
+---
+
+**Design is not just how it looks, but how it works. Build with purpose, consistency, and accessibility in mind.**
+

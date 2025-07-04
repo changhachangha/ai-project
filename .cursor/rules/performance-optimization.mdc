@@ -1,206 +1,112 @@
----
-description:
-globs:
-alwaysApply: false
----
 # Performance Optimization Guidelines
 
 ## 🚀 Next.js Performance Configuration
 
 ### Build Configuration Reference
+# Performance Optimization Rules - AI Developer Tools Hub
+
+## 🚀 PERFORMANCE MISSION
+Achieve and maintain enterprise-grade performance standards with Core Web Vitals consistently in the "Good" range. Every optimization must be measurable and contribute to user experience.
+
+## 📊 PERFORMANCE TARGETS (NON-NEGOTIABLE)
+
+### Core Web Vitals Thresholds
+- **LCP (Largest Contentful Paint)**: < 2.5s (Good), < 4.0s (Needs Improvement)
+- **INP (Interaction to Next Paint)**: < 200ms (Good), < 500ms (Needs Improvement)
+- **CLS (Cumulative Layout Shift)**: < 0.1 (Good), < 0.25 (Needs Improvement)
+- **FCP (First Contentful Paint)**: < 1.8s (Good), < 3.0s (Needs Improvement)
+- **TTFB (Time to First Byte)**: < 800ms (Good), < 1.8s (Needs Improvement)
+
+### Build Configuration Reference
 - Next.js config: [next.config.ts](mdc:next.config.ts)
 - Build output: **Standalone** for optimal deployment
 - Image optimization: **Enabled** with remote patterns
-- PWA support: **Enabled** with service worker
 - Package transpilation: **Configured** for specific libraries
 
-## 🎯 CRITICAL PERFORMANCE RULES
+## ⚡ CRITICAL PERFORMANCE RULES
 
-### ✅ ALWAYS DO - Performance
+### ✅ MANDATORY OPTIMIZATIONS
 
-1. **Use dynamic imports** - Split code at component boundaries
-2. **Implement proper loading states** - Show feedback during async operations
-3. **Optimize images** - Use Next.js Image component with proper sizing
-4. **Minimize bundle size** - Analyze and remove unnecessary dependencies
-5. **Use React.memo** - Prevent unnecessary re-renders
-6. **Implement virtualization** - For large lists and tables
-7. **Lazy load components** - Load components only when needed
-8. **Use proper caching strategies** - Leverage Next.js caching mechanisms
-9. **Optimize fonts** - Use Next.js font optimization
-10. **Monitor Core Web Vitals** - Track LCP, FID, and CLS metrics
+1. **MEMOIZATION IS REQUIRED**
+   ```typescript
+   // ALWAYS memoize components
+   const Component = memo<Props>(({ data }) => {
+     // ALWAYS memoize event handlers
+     const handleClick = useCallback(() => {
+       // Handler logic
+     }, []);
+   
+     // ALWAYS memoize computed values
+     const processedData = useMemo(() => {
+       return data.map(transform);
+     }, [data]);
+   
+     return <div>{/* JSX */}</div>;
+   });
+   
+   Component.displayName = 'Component';
+   ```
 
-### ❌ NEVER DO - Performance
+2. **DYNAMIC IMPORTS FOR CODE SPLITTING**
+   ```typescript
+   // Client-only components
+   const ClientComponent = dynamic(() => import('./ClientComponent'), {
+     ssr: false,
+     loading: () => (
+       <div className="animate-pulse bg-muted h-32 rounded-md" />
+     )
+   });
+   
+   // Heavy components with fallback
+   const HeavyChart = dynamic(() => import('./HeavyChart'), {
+     loading: () => (
+       <div className="flex items-center justify-center h-64">
+         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+       </div>
+     )
+   });
+   ```
+
+3. **OPTIMIZED LIST RENDERING**
+   ```typescript
+   // CRITICAL: Use optimized span elements, NOT Badge components
+   const badges = useMemo(() => {
+     return item.tags.map((tag) => (
+       <span 
+         key={tag}
+         className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground"
+       >
+         {tag}
+       </span>
+     ));
+   }, [item.tags]);
+   ```
+
+4. **WEB VITALS MONITORING**
+   ```typescript
+   // MANDATORY: Initialize in root layout
+   import { initWebVitals } from '@/lib/performance/web-vitals';
+   
+   useEffect(() => {
+     initWebVitals();
+   }, []);
+   
+   // Use performance monitoring hook
+   const { metrics, analysis } = usePerformanceMonitoring();
+   ```
+
+### ❌ PERFORMANCE KILLERS (NEVER DO)
 
 1. **DON'T import entire libraries** - Use tree-shaking friendly imports
 2. **DON'T create unnecessary re-renders** - Avoid inline objects and functions
-3. **DON'T use large images** - Optimize and compress all images
+3. **DON'T use large unoptimized images** - Always use Next.js Image component
 4. **DON'T block the main thread** - Move heavy computations to web workers
-5. **DON'T ignore bundle analysis** - Regularly check bundle size
-6. **DON'T use synchronous operations** - Always use async for I/O operations
-7. **DON'T create memory leaks** - Clean up event listeners and subscriptions
-8. **DON'T use inefficient algorithms** - Optimize data processing logic
-9. **DON'T ignore loading states** - Always provide user feedback
-10. **DON'T use unoptimized third-party scripts** - Load scripts efficiently
+5. **DON'T ignore bundle analysis** - Regularly check with `npm run analyze`
+6. **DON'T use Badge components in lists** - Use optimized span elements
+7. **DON'T skip performance monitoring** - Always track Core Web Vitals
+8. **DON'T create memory leaks** - Clean up event listeners and subscriptions
 
-## 🧩 Code Splitting Patterns
-
-### Dynamic Imports
-```typescript
-import dynamic from 'next/dynamic';
-
-// Client-only component with loading state
-const ClientOnlyComponent = dynamic(() => import('./ClientOnlyComponent'), {
-  ssr: false,
-  loading: () => (
-    <div className="animate-pulse bg-muted h-32 rounded-md" />
-  )
-});
-
-// Heavy component with code splitting
-const HeavyChart = dynamic(() => import('./HeavyChart'), {
-  loading: () => (
-    <div className="flex items-center justify-center h-64">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-    </div>
-  )
-});
-
-// Conditional loading
-const AdminPanel = dynamic(() => import('./AdminPanel'), {
-  ssr: false,
-  loading: () => <div>Loading admin panel...</div>
-});
-
-// Usage with conditional rendering
-function Dashboard({ isAdmin }: { isAdmin: boolean }) {
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      {isAdmin && <AdminPanel />}
-    </div>
-  );
-}
-```
-
-### Route-Based Code Splitting
-```typescript
-// Automatic code splitting with App Router
-// Each page.tsx automatically creates a separate chunk
-
-// app/encoding/base64/page.tsx
-export default function Base64Page() {
-  return <Base64Tool />;
-}
-
-// app/security/hash/page.tsx  
-export default function HashPage() {
-  return <HashTool />;
-}
-```
-
-### Component-Based Splitting
-```typescript
-// Split by feature
-const EncodingTools = dynamic(() => import('@/components/tools/EncodingTools'));
-const SecurityTools = dynamic(() => import('@/components/tools/SecurityTools'));
-const TextTools = dynamic(() => import('@/components/tools/TextTools'));
-
-// Split by complexity
-const SimpleCalculator = dynamic(() => import('./SimpleCalculator'));
-const AdvancedCalculator = dynamic(() => import('./AdvancedCalculator'), {
-  loading: () => <SimpleCalculator />
-});
-```
-
-## ⚡ React Optimization Patterns
-
-### Memoization Strategies
-```typescript
-import { memo, useMemo, useCallback } from 'react';
-
-// Component memoization
-interface ToolCardProps {
-  tool: Tool;
-  onSelect: (id: string) => void;
-  isFavorite: boolean;
-}
-
-const ToolCard = memo(({ tool, onSelect, isFavorite }: ToolCardProps) => {
-  const handleSelect = useCallback(() => {
-    onSelect(tool.id);
-  }, [tool.id, onSelect]);
-
-  return (
-    <Card onClick={handleSelect}>
-      <CardContent>
-        <h3>{tool.name}</h3>
-        <p>{tool.description}</p>
-        {isFavorite && <Heart className="text-red-500" />}
-      </CardContent>
-    </Card>
-  );
-});
-
-ToolCard.displayName = 'ToolCard';
-
-// Parent component optimization
-function ToolList({ tools, favorites }: { tools: Tool[]; favorites: string[] }) {
-  const favoriteSet = useMemo(() => new Set(favorites), [favorites]);
-  
-  const handleToolSelect = useCallback((id: string) => {
-    // Handle selection
-  }, []);
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {tools.map(tool => (
-        <ToolCard
-          key={tool.id}
-          tool={tool}
-          onSelect={handleToolSelect}
-          isFavorite={favoriteSet.has(tool.id)}
-        />
-      ))}
-    </div>
-  );
-}
-```
-
-### State Optimization
-```typescript
-// Avoid unnecessary state updates
-function SearchableList({ items }: { items: Item[] }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  // Debounced search to avoid excessive filtering
-  const debouncedSearchTerm = useMemo(() => {
-    const timeoutId = setTimeout(() => searchTerm, 300);
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
-
-  const filteredItems = useMemo(() => {
-    if (!searchTerm) return items;
-    return items.filter(item => 
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [items, searchTerm]);
-
-  return (
-    <div>
-      <input
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search items..."
-      />
-      <div>
-        {filteredItems.map(item => (
-          <div key={item.id}>{item.name}</div>
-        ))}
-      </div>
-    </div>
-  );
-}
-```
+## 🧩 ADVANCED OPTIMIZATION PATTERNS
 
 ### Context Optimization
 ```typescript
@@ -214,10 +120,6 @@ interface UIContextValue {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
 }
-
-// Separate contexts for different concerns
-const UserContext = createContext<UserContextValue | null>(null);
-const UIContext = createContext<UIContextValue | null>(null);
 
 // Memoized context providers
 function UserProvider({ children }: { children: React.ReactNode }) {
@@ -236,9 +138,26 @@ function UserProvider({ children }: { children: React.ReactNode }) {
 }
 ```
 
-## 🖼️ Image Optimization
+### State Optimization
+```typescript
+// Optimized state management with debouncing
+function useOptimizedState<T>(initialValue: T) {
+  const [state, setState] = useState<T>(initialValue);
+  const stateRef = useRef<T>(initialValue);
 
-### Next.js Image Component
+  const optimizedSetState = useCallback((newValue: T | ((prev: T) => T)) => {
+    setState(prev => {
+      const nextValue = typeof newValue === 'function' ? (newValue as (prev: T) => T)(prev) : newValue;
+      stateRef.current = nextValue;
+      return nextValue;
+    });
+  }, []);
+
+  return [state, optimizedSetState, stateRef] as const;
+}
+```
+
+### Image Optimization
 ```typescript
 import Image from 'next/image';
 
@@ -251,7 +170,7 @@ function ToolIcon({ tool }: { tool: Tool }) {
       width={48}
       height={48}
       className="rounded-md"
-      priority={tool.featured} // Load featured tools first
+      priority={tool.featured}
     />
   );
 }
@@ -269,71 +188,21 @@ function HeroImage() {
     />
   );
 }
-
-// Lazy loaded gallery
-function ImageGallery({ images }: { images: ImageData[] }) {
-  return (
-    <div className="grid grid-cols-3 gap-4">
-      {images.map((image, index) => (
-        <Image
-          key={image.id}
-          src={image.url}
-          alt={image.alt}
-          width={300}
-          height={200}
-          className="rounded-lg"
-          loading={index < 6 ? 'eager' : 'lazy'} // Load first 6 eagerly
-        />
-      ))}
-    </div>
-  );
-}
 ```
 
-## 📦 Bundle Optimization
+## 📦 BUNDLE OPTIMIZATION
 
-### Tree Shaking
+### Tree Shaking Best Practices
 ```typescript
-// Good: Import only what you need
+// ✅ Good: Import only what you need
 import { debounce } from 'lodash/debounce';
 import { Button } from '@/components/ui/button';
-import { formatDate } from 'date-fns/format';
 
-// Bad: Importing entire libraries
+// ❌ Bad: Importing entire libraries
 // import _ from 'lodash';
 // import * as dateFns from 'date-fns';
 
-// Use dynamic imports for large utilities
-async function processLargeData(data: unknown[]) {
-  const { chunk } = await import('lodash/chunk');
-  return chunk(data, 100);
-}
-```
-
-### Bundle Analysis
-```typescript
-// Add to package.json scripts:
-// "analyze": "ANALYZE=true npm run build"
-
-// In next.config.ts
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
-module.exports = withBundleAnalyzer(nextConfig);
-```
-
-### Dependency Optimization
-```typescript
-// Replace heavy libraries with lighter alternatives
-// Instead of moment.js (67kB), use day.js (2kB)
-import dayjs from 'dayjs';
-
-// Instead of full Lodash, use individual functions
-import debounce from 'lodash.debounce';
-import throttle from 'lodash.throttle';
-
-// Use native APIs when possible
+// ✅ Use native APIs when possible
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -342,17 +211,23 @@ const formatCurrency = (amount: number) => {
 };
 ```
 
-## 🔄 Caching Strategies
+### Bundle Analysis Commands
+```bash
+# Bundle analysis
+npm run analyze
+
+# Performance tests
+npm test -- __tests__/performance.test.ts
+
+# Development with monitoring
+npm run dev
+```
+
+## 🔄 CACHING STRATEGIES
 
 ### Next.js Caching
 ```typescript
 // Static generation with revalidation
-export async function generateStaticParams() {
-  const tools = await getTools();
-  return tools.map(tool => ({ id: tool.id }));
-}
-
-// Page with ISR (Incremental Static Regeneration)
 export const revalidate = 3600; // Revalidate every hour
 
 // API route caching
@@ -369,17 +244,7 @@ export async function GET() {
 
 ### Client-Side Caching
 ```typescript
-// React Query for API caching
-function useTools() {
-  return useQuery({
-    queryKey: ['tools'],
-    queryFn: fetchTools,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
-  });
-}
-
-// Local storage caching
+// Local storage caching with expiration
 const CACHE_KEY = 'user-preferences';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -415,7 +280,7 @@ function usePersistedState<T>(key: string, defaultValue: T) {
 }
 ```
 
-## 🎭 Loading States & Suspense
+## 🎭 LOADING STATES & SUSPENSE
 
 ### Suspense Boundaries
 ```typescript
@@ -438,144 +303,104 @@ function ToolListSkeleton() {
 function ToolsPage() {
   return (
     <div>
-      <h1>Developer Tools</h1>
       <Suspense fallback={<ToolListSkeleton />}>
         <ToolList />
       </Suspense>
     </div>
   );
 }
-
-// Nested suspense for granular loading
-function Dashboard() {
-  return (
-    <div className="space-y-6">
-      <Suspense fallback={<div className="h-20 bg-muted animate-pulse rounded" />}>
-        <StatsWidget />
-      </Suspense>
-      
-      <Suspense fallback={<ToolListSkeleton />}>
-        <RecentTools />
-      </Suspense>
-      
-      <Suspense fallback={<div className="h-64 bg-muted animate-pulse rounded" />}>
-        <ActivityChart />
-      </Suspense>
-    </div>
-  );
-}
 ```
 
-## 📊 Performance Monitoring
+## 📊 PERFORMANCE MONITORING
 
-### Core Web Vitals
+### Web Vitals Implementation
 ```typescript
-// Web Vitals reporting
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
-
-function sendToAnalytics(metric: any) {
-  // Send to your analytics service
-  console.log(metric);
-}
-
-// Measure all vitals
-getCLS(sendToAnalytics);
-getFID(sendToAnalytics);
-getFCP(sendToAnalytics);
-getLCP(sendToAnalytics);
-getTTFB(sendToAnalytics);
-
-// Custom performance tracking
-function usePerformanceMonitor() {
+// Performance monitoring hook
+function usePerformanceMonitoring() {
+  const [metrics, setMetrics] = useState<Metric[]>([]);
+  
   useEffect(() => {
     const observer = new PerformanceObserver((list) => {
-      list.getEntries().forEach((entry) => {
-        if (entry.entryType === 'navigation') {
-          console.log('Page load time:', entry.duration);
-        }
-      });
+      for (const entry of list.getEntries()) {
+        // Process performance entries
+        setMetrics(prev => [...prev, processEntry(entry)]);
+      }
     });
     
-    observer.observe({ entryTypes: ['navigation'] });
+    observer.observe({ entryTypes: ['navigation', 'paint', 'largest-contentful-paint'] });
     
     return () => observer.disconnect();
   }, []);
+  
+  return { metrics };
 }
 ```
 
-### Runtime Performance
+### Performance Testing
 ```typescript
-// Performance profiling in development
-function ProfiledComponent({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      const start = performance.now();
-      
-      return () => {
-        const end = performance.now();
-        console.log(`Component render time: ${end - start}ms`);
-      };
-    }
+// Performance benchmark tests
+describe('Performance Benchmarks', () => {
+  it('should render large list efficiently', () => {
+    const largeToolList = Array.from({ length: 100 }, (_, i) => ({
+      id: `tool-${i}`,
+      name: `Tool ${i}`,
+      description: `Description for tool ${i}`,
+      category: 'test',
+      tags: [`tag-${i}`]
+    }));
+
+    const startTime = performance.now();
+    render(React.createElement(OptimizedToolList, { tools: largeToolList }));
+    const endTime = performance.now();
+    const renderTime = endTime - startTime;
+
+    expect(renderTime).toBeLessThan(100); // 100ms threshold
   });
-
-  return <>{children}</>;
-}
-
-// Memory usage monitoring
-function useMemoryMonitor() {
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if ('memory' in performance) {
-        const memory = (performance as any).memory;
-        console.log({
-          usedJSHeapSize: memory.usedJSHeapSize,
-          totalJSHeapSize: memory.totalJSHeapSize,
-          jsHeapSizeLimit: memory.jsHeapSizeLimit
-        });
-      }
-    }, 10000); // Check every 10 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-}
+});
 ```
 
-## 🔧 Development Tools
+## 🔧 DEVELOPMENT TOOLS
 
-### Performance Debugging
+### Memory Usage Monitoring
 ```typescript
-// React DevTools Profiler integration
-import { Profiler } from 'react';
+export function monitorMemoryUsage() {
+  if (typeof window === 'undefined' || !('memory' in performance)) {
+    return null;
+  }
 
-function onRenderCallback(
-  id: string,
-  phase: 'mount' | 'update',
-  actualDuration: number,
-  baseDuration: number,
-  startTime: number,
-  commitTime: number
-) {
-  console.log('Profiler:', {
-    id,
-    phase,
-    actualDuration,
-    baseDuration,
-    startTime,
-    commitTime
-  });
-}
-
-function App() {
-  return (
-    <Profiler id="App" onRender={onRenderCallback}>
-      <Router>
-        <Routes>
-          {/* Your routes */}
-        </Routes>
-      </Router>
-    </Profiler>
-  );
+  const memory = (performance as unknown as {
+    memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number }
+  }).memory;
+  
+  return {
+    usedJSHeapSize: memory.usedJSHeapSize,
+    totalJSHeapSize: memory.totalJSHeapSize,
+    jsHeapSizeLimit: memory.jsHeapSizeLimit,
+    usagePercentage: Math.round((memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100)
+  };
 }
 ```
 
-Remember: **Performance is a feature** - Optimize proactively rather than reactively. Regular performance audits and monitoring help maintain a fast, responsive user experience. Always measure before and after optimizations to ensure they provide real benefits.
+## 🎯 PERFORMANCE VALIDATION CHECKLIST
+
+### Pre-deployment Performance Audit
+- [ ] Core Web Vitals meet "Good" thresholds
+- [ ] Bundle size optimized (< 500KB initial)
+- [ ] Images optimized and properly sized
+- [ ] Code splitting implemented for heavy components
+- [ ] Memoization applied to list components
+- [ ] Loading states implemented for async operations
+- [ ] Error boundaries handle performance failures
+- [ ] Memory leaks eliminated
+- [ ] Performance monitoring active
+
+### Regular Performance Maintenance
+- [ ] Weekly bundle analysis review
+- [ ] Monthly Core Web Vitals audit
+- [ ] Quarterly performance benchmark updates
+- [ ] Continuous monitoring alerts configured
+
+---
+
+**Performance is a feature, not an afterthought. Optimize proactively, measure continuously.**
+

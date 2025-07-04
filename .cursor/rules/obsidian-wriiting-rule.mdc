@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Development Terms Dictionary Automation Guide
+
+## Core Principle
+Automatically register and systematically manage all development terms in Obsidian Dictionary
+
+## Automation Process
+- **Auto Registration**: Automatically register every development term in Dictionary/ folder using Obsidian MCP tools
+- **Index Management**: Maintain alphabetical list and category classification in Dictionary/README.md
+
+## Writing Rules
+- **Language**: Write all explanations in Korean
+- **Explanation Style**: Provide supplementary explanations for non-developers
+- **Required Structure**: Simple definition → Detailed explanation → Use cases → Examples → Related terms → Tips → Tags
+- **Linking**: Connect related terms with Wiki links ([[term]])
+
+- **Organization**: Create category subfolders as needed (e.g., Dictionary/Frontend/)

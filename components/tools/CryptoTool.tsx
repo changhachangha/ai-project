@@ -195,9 +195,9 @@ const CryptoTool: React.FC = () => {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className='space-y-4'>
-                            <div className='flex items-start gap-2 p-3 border border-blue-200 bg-blue-50 rounded-md'>
-                                <AlertTriangle className='h-4 w-4 text-blue-600 mt-0.5' />
-                                <div className='text-sm text-blue-800'>
+                            <div className='flex items-start gap-2 p-3 border border-primary/20 bg-primary/5 rounded-md'>
+                                <AlertTriangle className='h-4 w-4 text-primary mt-0.5' />
+                                <div className='text-sm text-primary'>
                                     <strong>사용 방법:</strong> 아래 정보를 입력하면 SSH 명령어가 생성됩니다. 터미널에서
                                     실행한 후 결과를 위의 &quot;직접 입력&quot; 탭에 붙여넣으세요.
                                 </div>
@@ -304,9 +304,9 @@ const CryptoTool: React.FC = () => {
                                 </div>
                             )}
 
-                            <div className='space-y-3 p-4 border border-gray-200 bg-gray-50 rounded-md'>
+                            <div className='space-y-3 p-4 border border-border bg-muted rounded-md'>
                                 <h4 className='font-semibold text-sm'>사용 예시:</h4>
-                                <div className='space-y-2 text-sm text-gray-600'>
+                                <div className='space-y-2 text-sm text-muted-foreground'>
                                     <p>
                                         <strong>1단계:</strong> 연결 정보 및 인증 방식 선택
                                     </p>
@@ -327,9 +327,9 @@ const CryptoTool: React.FC = () => {
                                     </p>
                                 </div>
 
-                                <div className='pt-2 border-t border-gray-300'>
+                                <div className='pt-2 border-t border-border'>
                                     <h5 className='font-medium text-sm mb-2'>인증 방식별 특징:</h5>
-                                    <div className='space-y-1 text-xs text-gray-600'>
+                                    <div className='space-y-1 text-xs text-muted-foreground'>
                                         <p>
                                             <strong>• 비밀번호 인증:</strong> 명령어 실행 시 대화형으로 비밀번호 입력
                                         </p>

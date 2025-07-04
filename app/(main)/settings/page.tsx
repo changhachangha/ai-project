@@ -1,105 +1,97 @@
 'use client';
 
 import React from 'react';
-import { useSettingsStore } from '@/lib/store/settingsStore';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SettingsPage: React.FC = () => {
-    const {
-        theme,
-        fontSize,
-        dateFormat,
-        jsonIndentation,
-        toggleTheme,
-        setFontSize,
-        setDateFormat,
-        setJsonIndentation,
-    } = useSettingsStore();
+    const { theme, setTheme } = useTheme();
 
     return (
-        <div className='flex flex-col space-y-8 p-8'>
-            <h1 className='text-3xl font-bold'>Settings</h1>
+        <div className='container mx-auto p-8 space-y-8'>
+            <h1 className='text-3xl font-bold text-foreground'>Settings</h1>
 
-            <section className='space-y-4'>
-                <h2 className='text-2xl font-semibold'>Theme</h2>
-                <div className='flex items-center space-x-4'>
-                    <Label htmlFor='theme-select'>Select Theme:</Label>
-                    <Select onValueChange={(value: 'light' | 'dark') => toggleTheme(value)} defaultValue={theme}>
-                        <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='Select a theme' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='light'>Light</SelectItem>
-                            <SelectItem value='dark'>Dark</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Button onClick={() => toggleTheme()}>Toggle Theme</Button>
-                </div>
-            </section>
+            <Card className='bg-card border-border'>
+                <CardHeader>
+                    <CardTitle className='text-card-foreground'>테마 설정</CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                    <div className='flex items-center space-x-4'>
+                        <Label htmlFor='theme-select' className='text-card-foreground'>
+                            테마 선택:
+                        </Label>
+                        <Select value={theme} onValueChange={setTheme}>
+                            <SelectTrigger className='w-[180px] bg-background border-border text-foreground'>
+                                <SelectValue placeholder='테마를 선택하세요' />
+                            </SelectTrigger>
+                            <SelectContent className='bg-popover border-border'>
+                                <SelectItem value='light' className='text-popover-foreground'>
+                                    라이트 모드
+                                </SelectItem>
+                                <SelectItem value='dark' className='text-popover-foreground'>
+                                    다크 모드
+                                </SelectItem>
+                                <SelectItem value='system' className='text-popover-foreground'>
+                                    시스템 설정
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            variant='outline'
+                            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                            className='border-border text-foreground hover:bg-accent hover:text-accent-foreground'
+                        >
+                            테마 전환
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
 
-            <section className='space-y-4'>
-                <h2 className='text-2xl font-semibold'>Font Size</h2>
-                <div className='flex items-center space-x-4'>
-                    <Label htmlFor='font-size-select'>Select Font Size:</Label>
-                    <Select onValueChange={(value: 'sm' | 'md' | 'lg') => setFontSize(value)} defaultValue={fontSize}>
-                        <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='Select font size' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='sm'>Small</SelectItem>
-                            <SelectItem value='md'>Medium</SelectItem>
-                            <SelectItem value='lg'>Large</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </section>
-
-            <section className='space-y-4'>
-                <h2 className='text-2xl font-semibold'>Date Format</h2>
-                <div className='flex items-center space-x-4'>
-                    <Label htmlFor='date-format-select'>Select Date Format:</Label>
-                    <Select
-                        onValueChange={(value: 'YYYY-MM-DD' | 'MM/DD/YYYY') => setDateFormat(value)}
-                        defaultValue={dateFormat}
-                    >
-                        <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='Select date format' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='YYYY-MM-DD'>YYYY-MM-DD</SelectItem>
-                            <SelectItem value='MM/DD/YYYY'>MM/DD/YYYY</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </section>
-
-            <section className='space-y-4'>
-                <h2 className='text-2xl font-semibold'>JSON Indentation</h2>
-                <div className='flex items-center space-x-4'>
-                    <Label htmlFor='json-indentation-select'>Select JSON Indentation:</Label>
-                    <Select
-                        onValueChange={(value: string) => {
-                            if (value === 'tab') {
-                                setJsonIndentation('tab');
-                            } else {
-                                setJsonIndentation(parseInt(value));
-                            }
-                        }}
-                        defaultValue={jsonIndentation.toString()}
-                    >
-                        <SelectTrigger className='w-[180px]'>
-                            <SelectValue placeholder='Select indentation' />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value='2'>2 Spaces</SelectItem>
-                            <SelectItem value='4'>4 Spaces</SelectItem>
-                            <SelectItem value='tab'>Tab</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </section>
+            <Card className='bg-card border-border'>
+                <CardHeader>
+                    <CardTitle className='text-card-foreground'>기타 설정</CardTitle>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                    <div className='flex items-center space-x-4'>
+                        <Label className='text-card-foreground'>폰트 크기:</Label>
+                        <Select defaultValue='md'>
+                            <SelectTrigger className='w-[180px] bg-background border-border text-foreground'>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className='bg-popover border-border'>
+                                <SelectItem value='sm' className='text-popover-foreground'>
+                                    작게
+                                </SelectItem>
+                                <SelectItem value='md' className='text-popover-foreground'>
+                                    보통
+                                </SelectItem>
+                                <SelectItem value='lg' className='text-popover-foreground'>
+                                    크게
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className='flex items-center space-x-4'>
+                        <Label className='text-card-foreground'>날짜 형식:</Label>
+                        <Select defaultValue='YYYY-MM-DD'>
+                            <SelectTrigger className='w-[180px] bg-background border-border text-foreground'>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className='bg-popover border-border'>
+                                <SelectItem value='YYYY-MM-DD' className='text-popover-foreground'>
+                                    YYYY-MM-DD
+                                </SelectItem>
+                                <SelectItem value='MM/DD/YYYY' className='text-popover-foreground'>
+                                    MM/DD/YYYY
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 };

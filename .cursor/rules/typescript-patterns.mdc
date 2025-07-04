@@ -1,529 +1,564 @@
----
-description:
-globs:
-alwaysApply: false
----
 # TypeScript Patterns & Best Practices
 
-## 📋 TypeScript Configuration
+## 🎯 Core TypeScript Principles
 
-### Project Setup Reference
-- TypeScript config: [tsconfig.json](mdc:tsconfig.json)
-- Target: **ES2017** for broad compatibility
-- Strict mode: **Enabled** for maximum type safety
-- Path mapping: `@/*` for absolute imports
-- JSX: **Preserve** for Next.js processing
+### Type Safety First
+# TypeScript Excellence Rules - AI Developer Tools Hub
 
-## 🎯 CRITICAL TYPESCRIPT RULES
+## 🎯 TYPESCRIPT MISSION
+Achieve 100% type safety with zero `any` types. Every component, function, and data structure must be explicitly typed with proper interfaces and generic constraints.
 
-### ✅ ALWAYS DO - TypeScript
+## 🚫 ABSOLUTE PROHIBITIONS
 
-1. **Define interfaces for all props** - Never use `any` type
-2. **Use strict type checking** - Enable all TypeScript strict flags
-3. **Leverage union types** - Use `|` for multiple possible types
-4. **Use generic types** - Make components and functions reusable
-5. **Define return types explicitly** - For functions and async operations
-6. **Use `as const` assertions** - For literal types and readonly arrays
-7. **Implement proper error handling** - Type your error boundaries
-8. **Use type guards** - For runtime type checking
-9. **Define API response types** - Type all external data
-10. **Use utility types** - Leverage built-in TypeScript utilities
+### NEVER DO (Zero Tolerance)
+1. **NEVER use `any` type** - Always use proper generic constraints
+2. **NEVER skip interface definitions** - Every component must have typed props
+3. **NEVER use implicit returns without types** - Always specify return types
+4. **NEVER ignore TypeScript errors** - Fix all compilation errors before proceeding
+5. **NEVER use `@ts-ignore`** - Find the proper type solution instead
+6. **NEVER use loose type assertions** - Use type guards and proper validation
 
-### ❌ NEVER DO - TypeScript
+## 📋 MANDATORY TYPE PATTERNS
 
-1. **DON'T use `any` type** - Always define proper types
-2. **DON'T ignore TypeScript errors** - Fix all type issues before deployment
-3. **DON'T use `@ts-ignore`** - Find proper type solutions instead
-4. **DON'T leave functions untyped** - Always define parameter and return types
-5. **DON'T use loose type assertions** - Avoid `as unknown as Type`
-6. **DON'T create overly complex types** - Keep types readable and maintainable
-7. **DON'T use `Function` type** - Define specific function signatures
-8. **DON'T ignore null/undefined** - Handle all possible values
-9. **DON'T use implicit any** - Configure TypeScript to catch these
-10. **DON'T skip type definitions** - Type all external libraries
-
-## 🧩 Component Type Patterns
-
-### Basic Component Props
+### 1. Component Interface Definition (REQUIRED)
 ```typescript
-// Interface for component props
-interface ComponentProps {
-  // Required props
+// ALWAYS define props interface before component
+interface ToolPageProps {
   title: string;
-  data: DataType[];
-  
-  // Optional props
+  description: string;
+  placeholder?: string;
+  onProcess?: (input: string) => Promise<string>;
+  isLoading?: boolean;
   className?: string;
-  variant?: 'default' | 'compact' | 'expanded';
-  
-  // Event handlers
-  onSelect?: (item: DataType) => void;
-  onError?: (error: Error) => void;
-  
-  // Children
-  children?: React.ReactNode;
 }
 
-// Component with proper typing
-export default function Component({
-  title,
-  data,
-  className,
-  variant = 'default',
-  onSelect,
-  onError,
-  children
-}: ComponentProps) {
+// ALWAYS use explicit generic typing
+const ToolPage = memo<ToolPageProps>(({ 
+  title, 
+  description, 
+  placeholder = "Enter input...",
+  onProcess,
+  isLoading = false,
+  className 
+}) => {
   // Component implementation
+});
+
+ToolPage.displayName = 'ToolPage';
+```
+
+### 2. Data Type Definitions (MANDATORY)
+```typescript
+// Core data types from [app/data/types.ts](mdc:app/data/types.ts)
+interface Integration {
+  id: string;
+  name: string;
+  description: string;
+  category: 'encoding' | 'text' | 'conversion' | 'security';
+  tags: string[];
+  featured: boolean;
+  path: string;
+}
+
+// Tool-specific result types
+interface EncodingResult {
+  success: boolean;
+  data: string;
+  error?: string;
+  timestamp: number;
+}
+
+// API response types
+interface ApiResponse<T> {
+  data: T;
+  status: 'success' | 'error';
+  message?: string;
+  timestamp: number;
 }
 ```
 
-### Advanced Component Patterns
+### 3. Hook Type Patterns (REQUIRED)
 ```typescript
-// Generic component
-interface GenericListProps<T> {
-  items: T[];
-  renderItem: (item: T, index: number) => React.ReactNode;
-  keyExtractor: (item: T) => string | number;
-  className?: string;
+// Custom hook with proper generic typing
+function useEncoding<T extends string | Buffer>(
+  initialValue: T
+): [T, (value: T) => void, boolean] {
+  const [value, setValue] = useState<T>(initialValue);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  const updateValue = useCallback((newValue: T) => {
+    setIsProcessing(true);
+    setValue(newValue);
+    setIsProcessing(false);
+  }, []);
+
+  return [value, updateValue, isProcessing];
 }
 
-function GenericList<T>({
-  items,
-  renderItem,
-  keyExtractor,
-  className
-}: GenericListProps<T>) {
-  return (
-    <div className={className}>
-      {items.map((item, index) => (
-        <div key={keyExtractor(item)}>
-          {renderItem(item, index)}
-        </div>
-      ))}
-    </div>
-  );
+// State hook with proper typing
+function useOptimizedState<T>(
+  initialValue: T
+): [T, (value: T | ((prev: T) => T)) => void, React.MutableRefObject<T>] {
+  const [state, setState] = useState<T>(initialValue);
+  const stateRef = useRef<T>(initialValue);
+
+  const optimizedSetState = useCallback((newValue: T | ((prev: T) => T)) => {
+    setState(prev => {
+      const nextValue = typeof newValue === 'function' 
+        ? (newValue as (prev: T) => T)(prev) 
+        : newValue;
+      stateRef.current = nextValue;
+      return nextValue;
+    });
+  }, []);
+
+  return [state, optimizedSetState, stateRef];
+}
+```
+
+### 4. Event Handler Typing (MANDATORY)
+```typescript
+// Form event handlers
+interface FormHandlers {
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => void;
+  onFocus: (event: React.FocusEvent<HTMLElement>) => void;
+}
+
+// Button click handlers
+type ButtonClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => void;
+
+// Generic event handler
+type EventHandler<T extends HTMLElement> = (event: React.SyntheticEvent<T>) => void;
+
+// Example usage
+const handleSubmit: FormHandlers['onSubmit'] = useCallback((event) => {
+  event.preventDefault();
+  // Handle form submission
+}, []);
+
+const handleButtonClick: ButtonClickHandler = useCallback((event) => {
+  event.stopPropagation();
+  // Handle button click
+}, []);
+```
+
+### 5. Async Function Typing (REQUIRED)
+```typescript
+// API function with proper error handling
+async function processEncoding(
+  input: string,
+  type: 'base64' | 'hex' | 'url'
+): Promise<EncodingResult> {
+  try {
+    const result = await performEncoding(input, type);
+    return {
+      success: true,
+      data: result,
+      timestamp: Date.now()
+    };
+  } catch (error) {
+    return {
+      success: false,
+      data: '',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: Date.now()
+    };
+  }
+}
+
+// Generic async operation
+async function performAsyncOperation<TInput, TOutput>(
+  input: TInput,
+  processor: (input: TInput) => Promise<TOutput>
+): Promise<ApiResponse<TOutput>> {
+  try {
+    const data = await processor(input);
+    return {
+      data,
+      status: 'success',
+      timestamp: Date.now()
+    };
+  } catch (error) {
+    return {
+      data: {} as TOutput, // Type assertion only when necessary
+      status: 'error',
+      message: error instanceof Error ? error.message : 'Operation failed',
+      timestamp: Date.now()
+    };
+  }
+}
+```
+
+## 🔧 ADVANCED TYPE PATTERNS
+
+### Union Types and Discriminated Unions
+```typescript
+// Tool category types
+type ToolCategory = 'encoding' | 'text' | 'conversion' | 'security';
+
+// Discriminated union for different tool types
+interface BaseToolConfig {
+  id: string;
+  name: string;
+  description: string;
+}
+
+interface EncodingToolConfig extends BaseToolConfig {
+  type: 'encoding';
+  supportedFormats: ('base64' | 'hex' | 'url')[];
+}
+
+interface TextToolConfig extends BaseToolConfig {
+  type: 'text';
+  features: ('format' | 'validate' | 'transform')[];
+}
+
+interface SecurityToolConfig extends BaseToolConfig {
+  type: 'security';
+  algorithms: ('md5' | 'sha1' | 'sha256')[];
+}
+
+type ToolConfig = EncodingToolConfig | TextToolConfig | SecurityToolConfig;
+
+// Type guard functions
+function isEncodingTool(tool: ToolConfig): tool is EncodingToolConfig {
+  return tool.type === 'encoding';
+}
+
+function isTextTool(tool: ToolConfig): tool is TextToolConfig {
+  return tool.type === 'text';
+}
+
+function isSecurityTool(tool: ToolConfig): tool is SecurityToolConfig {
+  return tool.type === 'security';
+}
+```
+
+### Generic Constraints and Conditional Types
+```typescript
+// Generic constraint for tool processors
+interface ProcessorConstraint {
+  input: string;
+  output: string;
+}
+
+type ToolProcessor<T extends ProcessorConstraint> = (
+  input: T['input']
+) => Promise<T['output']>;
+
+// Conditional types for different operations
+type OperationResult<T> = T extends string 
+  ? { encoded: string; original: string }
+  : T extends Buffer 
+  ? { buffer: Buffer; size: number }
+  : never;
+
+// Utility types for component props
+type RequiredProps<T> = {
+  [K in keyof T]-?: T[K];
+};
+
+type OptionalProps<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+// Example usage
+interface ToolProps {
+  title: string;
+  description: string;
+  onProcess: (input: string) => void;
+  placeholder?: string;
+  isLoading?: boolean;
+}
+
+type RequiredToolProps = RequiredProps<ToolProps>;
+type FlexibleToolProps = OptionalProps<ToolProps, 'placeholder' | 'isLoading'>;
+```
+
+### Context and Provider Typing
+```typescript
+// Context type definitions
+interface AppContextValue {
+  user: User | null;
+  setUser: (user: User | null) => void;
+  preferences: UserPreferences;
+  updatePreferences: (prefs: Partial<UserPreferences>) => void;
+}
+
+interface UIContextValue {
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  theme: 'light' | 'dark' | 'system';
+  setTheme: (theme: 'light' | 'dark' | 'system') => void;
+}
+
+// Context creation with proper typing
+const AppContext = createContext<AppContextValue | null>(null);
+const UIContext = createContext<UIContextValue | null>(null);
+
+// Custom hooks with type safety
+function useAppContext(): AppContextValue {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within AppProvider');
+  }
+  return context;
+}
+
+function useUIContext(): UIContextValue {
+  const context = useContext(UIContext);
+  if (!context) {
+    throw new Error('useUIContext must be used within UIProvider');
+  }
+  return context;
+}
+```
+
+## 🎨 COMPONENT TYPE PATTERNS
+
+### Higher-Order Component Typing
+```typescript
+// HOC with proper generic typing
+function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>
+): React.ComponentType<P> {
+  const WrappedComponent = (props: P) => {
+    return (
+      <ErrorBoundary>
+        <Component {...props} />
+      </ErrorBoundary>
+    );
+  };
+
+  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+  
+  return WrappedComponent;
+}
+
+// Usage with proper typing
+const SafeToolPage = withErrorBoundary<ToolPageProps>(ToolPage);
+```
+
+### Render Props Pattern
+```typescript
+// Render props with proper typing
+interface DataFetcherProps<T> {
+  url: string;
+  children: (data: T | null, loading: boolean, error: string | null) => React.ReactNode;
+}
+
+function DataFetcher<T>({ url, children }: DataFetcherProps<T>) {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(url);
+        const result: T = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Fetch failed');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]);
+
+  return <>{children(data, loading, error)}</>;
 }
 
 // Usage
-<GenericList<Tool>
-  items={tools}
-  renderItem={(tool) => <ToolCard tool={tool} />}
-  keyExtractor={(tool) => tool.id}
-/>
+<DataFetcher<Integration[]> url="/api/tools">
+  {(tools, loading, error) => {
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    return <ToolList tools={tools || []} />;
+  }}
+</DataFetcher>
 ```
 
-### forwardRef with TypeScript
-```typescript
-import { forwardRef } from 'react';
+## 🔍 TYPE VALIDATION AND GUARDS
 
-interface CustomInputProps {
-  label: string;
-  error?: string;
-  className?: string;
-}
-
-const CustomInput = forwardRef<
-  HTMLInputElement,
-  CustomInputProps & React.InputHTMLAttributes<HTMLInputElement>
->(({ label, error, className, ...props }, ref) => {
-  return (
-    <div className={className}>
-      <label>{label}</label>
-      <input ref={ref} {...props} />
-      {error && <span className="error">{error}</span>}
-    </div>
-  );
-});
-
-CustomInput.displayName = 'CustomInput';
-```
-
-## 🔧 Data Type Definitions
-
-### Tool/Integration Types
-```typescript
-// Base types for the application
-interface Tool {
-  readonly id: string;
-  readonly name: string;
-  readonly description: string;
-  readonly category: ToolCategory;
-  readonly tags: ReadonlyArray<string>;
-  readonly featured: boolean;
-  readonly createdAt: Date;
-  readonly updatedAt: Date;
-}
-
-// Union types for categories
-type ToolCategory = 
-  | '텍스트 처리'
-  | '보안/암호화' 
-  | '인코딩/디코딩'
-  | '변환 도구';
-
-// Utility types
-type ToolWithoutDates = Omit<Tool, 'createdAt' | 'updatedAt'>;
-type ToolPreview = Pick<Tool, 'id' | 'name' | 'description' | 'category'>;
-type PartialTool = Partial<Tool> & Pick<Tool, 'id'>;
-```
-
-### API Response Types
-```typescript
-// Generic API response wrapper
-interface ApiResponse<T> {
-  readonly data: T;
-  readonly success: boolean;
-  readonly message?: string;
-  readonly error?: string;
-}
-
-// Specific API responses
-interface ToolsResponse extends ApiResponse<Tool[]> {
-  readonly pagination: {
-    readonly page: number;
-    readonly limit: number;
-    readonly total: number;
-    readonly totalPages: number;
-  };
-}
-
-// Error types
-interface ApiError {
-  readonly code: string;
-  readonly message: string;
-  readonly details?: Record<string, unknown>;
-}
-```
-
-### Form Types
-```typescript
-// Form data types
-interface ToolFormData {
-  name: string;
-  description: string;
-  category: ToolCategory;
-  tags: string[];
-  featured: boolean;
-}
-
-// Form validation types
-type ValidationErrors<T> = {
-  readonly [K in keyof T]?: string;
-};
-
-// Form state
-interface FormState<T> {
-  readonly data: T;
-  readonly errors: ValidationErrors<T>;
-  readonly isSubmitting: boolean;
-  readonly isValid: boolean;
-}
-```
-
-## 🎣 Hook Type Patterns
-
-### Custom Hook Types
-```typescript
-// Encoding hook types
-interface UseEncodingOptions {
-  readonly initialInput?: string;
-  readonly autoEncode?: boolean;
-  readonly onError?: (error: Error) => void;
-}
-
-interface UseEncodingReturn {
-  readonly input: string;
-  readonly output: string;
-  readonly isProcessing: boolean;
-  readonly error: string | null;
-  readonly setInput: (value: string) => void;
-  readonly encode: () => void;
-  readonly decode: () => void;
-  readonly clear: () => void;
-}
-
-function useEncoding(options: UseEncodingOptions = {}): UseEncodingReturn {
-  // Hook implementation
-}
-```
-
-### State Management Types
-```typescript
-// Zustand store types
-interface UserState {
-  readonly user: User | null;
-  readonly isAuthenticated: boolean;
-  readonly preferences: UserPreferences;
-  
-  // Actions
-  readonly setUser: (user: User) => void;
-  readonly logout: () => void;
-  readonly updatePreferences: (preferences: Partial<UserPreferences>) => void;
-}
-
-interface SettingsState {
-  readonly theme: 'light' | 'dark' | 'system';
-  readonly language: 'en' | 'ko';
-  readonly autoSave: boolean;
-  
-  // Actions
-  readonly setTheme: (theme: SettingsState['theme']) => void;
-  readonly setLanguage: (language: SettingsState['language']) => void;
-  readonly toggleAutoSave: () => void;
-}
-```
-
-## 🔒 Type Safety Patterns
-
-### Type Guards
+### Runtime Type Validation
 ```typescript
 // Type guard functions
 function isString(value: unknown): value is string {
   return typeof value === 'string';
 }
 
-function isTool(value: unknown): value is Tool {
+function isValidIntegration(obj: unknown): obj is Integration {
   return (
-    typeof value === 'object' &&
-    value !== null &&
-    'id' in value &&
-    'name' in value &&
-    'category' in value
+    typeof obj === 'object' &&
+    obj !== null &&
+    'id' in obj &&
+    'name' in obj &&
+    'description' in obj &&
+    'category' in obj &&
+    'tags' in obj &&
+    'featured' in obj &&
+    'path' in obj &&
+    isString((obj as any).id) &&
+    isString((obj as any).name) &&
+    isString((obj as any).description) &&
+    ['encoding', 'text', 'conversion', 'security'].includes((obj as any).category) &&
+    Array.isArray((obj as any).tags) &&
+    typeof (obj as any).featured === 'boolean' &&
+    isString((obj as any).path)
   );
 }
 
-// Array type guard
-function isToolArray(value: unknown): value is Tool[] {
-  return Array.isArray(value) && value.every(isTool);
-}
-
-// Usage
-if (isTool(data)) {
-  // TypeScript knows data is Tool type here
-  console.log(data.name);
-}
-```
-
-### Discriminated Unions
-```typescript
-// State types with discriminated unions
-type LoadingState = {
-  readonly status: 'loading';
-};
-
-type SuccessState = {
-  readonly status: 'success';
-  readonly data: Tool[];
-};
-
-type ErrorState = {
-  readonly status: 'error';
-  readonly error: string;
-};
-
-type DataState = LoadingState | SuccessState | ErrorState;
-
-// Usage with type narrowing
-function handleState(state: DataState) {
-  switch (state.status) {
-    case 'loading':
-      return <div>Loading...</div>;
-    case 'success':
-      return <div>{state.data.length} tools found</div>;
-    case 'error':
-      return <div>Error: {state.error}</div>;
+// Validation with error handling
+function validateAndProcessIntegration(data: unknown): Integration {
+  if (!isValidIntegration(data)) {
+    throw new Error('Invalid integration data structure');
   }
+  return data;
 }
 ```
 
-### Branded Types
+### Zod Integration (Optional but Recommended)
 ```typescript
-// Create branded types for IDs
-type UserId = string & { readonly __brand: 'UserId' };
-type ToolId = string & { readonly __brand: 'ToolId' };
+import { z } from 'zod';
 
-// Helper functions
-function createUserId(id: string): UserId {
-  return id as UserId;
-}
-
-function createToolId(id: string): ToolId {
-  return id as ToolId;
-}
-
-// Usage prevents mixing different ID types
-function getUser(id: UserId): User { /* ... */ }
-function getTool(id: ToolId): Tool { /* ... */ }
-
-// This would cause a TypeScript error:
-// getUser(createToolId('tool-123')); // Error!
-```
-
-## 🚀 Async Patterns
-
-### Promise Types
-```typescript
-// Async function types
-type AsyncOperation<T> = () => Promise<T>;
-type AsyncOperationWithParams<T, P> = (params: P) => Promise<T>;
-
-// API function types
-interface ApiClient {
-  readonly getTools: AsyncOperation<Tool[]>;
-  readonly getTool: AsyncOperationWithParams<Tool, string>;
-  readonly createTool: AsyncOperationWithParams<Tool, ToolFormData>;
-  readonly updateTool: AsyncOperationWithParams<Tool, { id: string; data: Partial<ToolFormData> }>;
-  readonly deleteTool: AsyncOperationWithParams<void, string>;
-}
-
-// Error handling with typed errors
-class ApiError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string,
-    public readonly status: number
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
-
-async function fetchTool(id: string): Promise<Tool> {
-  try {
-    const response = await fetch(`/api/tools/${id}`);
-    
-    if (!response.ok) {
-      throw new ApiError(
-        'Failed to fetch tool',
-        'FETCH_ERROR',
-        response.status
-      );
-    }
-    
-    const data = await response.json();
-    
-    if (!isTool(data)) {
-      throw new ApiError(
-        'Invalid tool data',
-        'INVALID_DATA',
-        500
-      );
-    }
-    
-    return data;
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    throw new ApiError(
-      'Unknown error occurred',
-      'UNKNOWN_ERROR',
-      500
-    );
-  }
-}
-```
-
-### React Query Types
-```typescript
-// React Query with TypeScript
-interface UseToolsOptions {
-  readonly category?: ToolCategory;
-  readonly search?: string;
-  readonly enabled?: boolean;
-}
-
-function useTools(options: UseToolsOptions = {}) {
-  return useQuery({
-    queryKey: ['tools', options],
-    queryFn: () => fetchTools(options),
-    enabled: options.enabled !== false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-}
-
-// Mutation types
-interface CreateToolMutation {
-  readonly data: ToolFormData;
-}
-
-function useCreateTool() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: (data: ToolFormData) => createTool(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['tools']);
-    },
-    onError: (error: ApiError) => {
-      console.error('Failed to create tool:', error.message);
-    },
-  });
-}
-```
-
-## 🧪 Testing Types
-
-### Test Utility Types
-```typescript
-// Mock types for testing
-type MockedFunction<T extends (...args: any[]) => any> = jest.MockedFunction<T>;
-
-interface MockedApiClient {
-  readonly getTools: MockedFunction<ApiClient['getTools']>;
-  readonly getTool: MockedFunction<ApiClient['getTool']>;
-  readonly createTool: MockedFunction<ApiClient['createTool']>;
-}
-
-// Test data factory types
-interface ToolFactory {
-  readonly build: (overrides?: Partial<Tool>) => Tool;
-  readonly buildList: (count: number, overrides?: Partial<Tool>) => Tool[];
-}
-
-const createToolFactory = (): ToolFactory => ({
-  build: (overrides = {}) => ({
-    id: 'test-id',
-    name: 'Test Tool',
-    description: 'Test description',
-    category: '텍스트 처리',
-    tags: ['test'],
-    featured: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ...overrides,
-  }),
-  buildList: (count, overrides) => 
-    Array.from({ length: count }, () => createToolFactory().build(overrides)),
+// Schema definitions
+const IntegrationSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  category: z.enum(['encoding', 'text', 'conversion', 'security']),
+  tags: z.array(z.string()),
+  featured: z.boolean(),
+  path: z.string()
 });
+
+const ApiResponseSchema = z.object({
+  data: z.unknown(),
+  status: z.enum(['success', 'error']),
+  message: z.string().optional(),
+  timestamp: z.number()
+});
+
+// Type inference from schema
+type Integration = z.infer<typeof IntegrationSchema>;
+type ApiResponse<T> = Omit<z.infer<typeof ApiResponseSchema>, 'data'> & { data: T };
+
+// Validation function
+function parseIntegration(data: unknown): Integration {
+  return IntegrationSchema.parse(data);
+}
 ```
 
-## 📚 Utility Types
+## 📊 UTILITY TYPES
 
-### Common Utility Patterns
+### Custom Utility Types
 ```typescript
-// Deep readonly
+// Deep readonly type
 type DeepReadonly<T> = {
   readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
 };
 
-// Optional except for specific keys
-type OptionalExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+// Non-empty array type
+type NonEmptyArray<T> = [T, ...T[]];
 
-// Require specific keys
-type RequireKeys<T, K extends keyof T> = T & Required<Pick<T, K>>;
+// Exact type (no extra properties)
+type Exact<T, U> = T extends U ? (U extends T ? T : never) : never;
 
-// Extract function parameters
-type ExtractParams<T> = T extends (...args: infer P) => any ? P : never;
+// Function parameter types
+type Parameters<T> = T extends (...args: infer P) => any ? P : never;
 
-// Extract promise type
-type ExtractPromise<T> = T extends Promise<infer U> ? U : T;
+// Return type extraction
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
 
-// Usage examples
-type ReadonlyTool = DeepReadonly<Tool>;
-type ToolWithRequiredName = RequireKeys<Partial<Tool>, 'name'>;
-type CreateToolParams = ExtractParams<typeof createTool>;
+// Example usage
+type ReadonlyIntegration = DeepReadonly<Integration>;
+type ToolCategories = NonEmptyArray<ToolCategory>;
 ```
 
-Remember: **Type safety is paramount** - Use TypeScript's full power to catch errors at compile time rather than runtime. Always prefer explicit typing over implicit any, and leverage the type system to make your code more maintainable and self-documenting.
+## 🧪 TESTING TYPE PATTERNS
+
+### Test Utilities with Proper Typing
+```typescript
+// Mock function with proper typing
+function createMockFunction<T extends (...args: any[]) => any>(
+  implementation?: T
+): jest.MockedFunction<T> {
+  return jest.fn(implementation) as jest.MockedFunction<T>;
+}
+
+// Test data factory with typing
+function createTestIntegration(overrides: Partial<Integration> = {}): Integration {
+  return {
+    id: 'test-tool',
+    name: 'Test Tool',
+    description: 'A test tool',
+    category: 'encoding',
+    tags: ['test'],
+    featured: false,
+    path: '/test/tool',
+    ...overrides
+  };
+}
+
+// Type-safe test assertions
+function assertIsIntegration(obj: unknown): asserts obj is Integration {
+  if (!isValidIntegration(obj)) {
+    throw new Error('Object is not a valid Integration');
+  }
+}
+```
+
+## 🎯 TYPE SAFETY CHECKLIST
+
+### Pre-commit Type Validation
+- [ ] No `any` types used
+- [ ] All component props have interfaces
+- [ ] All functions have explicit return types
+- [ ] All async operations are properly typed
+- [ ] Event handlers use proper React event types
+- [ ] Generic constraints are applied where needed
+- [ ] Type guards are used for runtime validation
+- [ ] Union types use discriminated unions where appropriate
+
+### Build Validation Commands
+```bash
+# Type checking (MUST pass)
+npx tsc --noEmit
+
+# Strict type checking
+npx tsc --noEmit --strict
+
+# Type coverage analysis
+npx type-coverage --detail
+```
+
+## 💡 BEST PRACTICES SUMMARY
+
+### DO (Always)
+1. Define interfaces before implementing components
+2. Use generic constraints for reusable functions
+3. Implement type guards for runtime validation
+4. Use discriminated unions for complex state
+5. Apply proper event typing for handlers
+6. Use utility types for complex transformations
+7. Implement proper error type handling
+8. Use strict TypeScript configuration
+
+### DON'T (Never)
+1. Use `any` type (use `unknown` instead)
+2. Skip interface definitions
+3. Use loose type assertions without validation
+4. Ignore TypeScript compilation errors
+5. Use `@ts-ignore` without proper justification
+6. Create overly complex type hierarchies
+7. Skip return type annotations
+8. Use implicit any in function parameters
+
+---
+
+**Type safety is not optional. It's the foundation of maintainable code.**
+

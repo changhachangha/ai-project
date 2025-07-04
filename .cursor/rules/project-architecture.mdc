@@ -1,8 +1,3 @@
----
-description:
-globs:
-alwaysApply: false
----
 # Project Architecture & Development Guidelines
 
 ## 🏗️ Project Overview
@@ -24,6 +19,22 @@ app/
 ├── layout.tsx          # Root layout with command palette
 ├── page.tsx           # Home page entry
 └── globals.css        # Global styles with CSS variables
+components/
+├── ui/                 # shadcn/ui components
+├── optimized/          # Performance optimized components
+│   ├── dynamic-components.tsx
+│   └── memoized-components.tsx
+└── performance/        # Performance monitoring components
+lib/
+├── performance/        # Performance utilities
+│   └── web-vitals.ts  # Web vitals monitoring
+├── store/             # Zustand stores
+└── utils.ts           # Utility functions
+hooks/
+├── useOptimizedState.ts # Performance optimized hooks
+└── useEncoding.ts     # Encoding/decoding hooks
+__tests__/
+└── performance.test.ts # Performance tests
 ```
 
 ### Key Files Reference
@@ -33,6 +44,7 @@ app/
 - Global styles: [app/globals.css](mdc:app/globals.css)
 - Config: [next.config.ts](mdc:next.config.ts)
 - Package info: [package.json](mdc:package.json)
+- Performance monitoring: [lib/performance/web-vitals.ts](mdc:lib/performance/web-vitals.ts)
 
 ## 🎯 CRITICAL RULES - MUST FOLLOW
 
@@ -41,12 +53,16 @@ app/
 2. **Follow App Router patterns** - Use server/client components appropriately
 3. **Use `"use client"` directive** for any component using browser APIs or state
 4. **Import from `@/` paths** - Use absolute imports configured in tsconfig
-5. **Use shadcn/ui components** - Leverage existing UI components from [components/ui/](mdc:components/ui/)
+5. **Use shadcn/ui components** - Leverage existing UI components from [components/ui/](mdc:components/ui)
 6. **Apply Tailwind classes** - Use utility-first CSS with design system variables
 7. **Handle SSR/CSR properly** - Use `next/dynamic` with `ssr: false` for client-only components
 8. **Maintain responsive design** - Ensure mobile-first responsive layouts
 9. **Follow naming conventions** - PascalCase for components, camelCase for utilities
 10. **Use proper error boundaries** - Handle errors gracefully in React components
+11. **Implement performance monitoring** - Use web-vitals package for Core Web Vitals tracking
+12. **Apply memoization patterns** - Use React.memo, useMemo, useCallback strategically
+13. **Use optimized components** - Leverage components from [components/optimized/](mdc:components/optimized)
+14. **Implement proper type safety** - Define interfaces for all component props and state
 
 ### ❌ NEVER DO
 1. **DON'T use inline styles** - Always use Tailwind classes or CSS variables
@@ -59,6 +75,10 @@ app/
 8. **DON'T create duplicate utilities** - Check [lib/utils.ts](mdc:lib/utils.ts) first
 9. **DON'T ignore mobile responsiveness** - Test on all screen sizes
 10. **DON'T use browser APIs in server components** - Keep server/client boundaries clear
+11. **DON'T use Badge components for performance-critical lists** - Use optimized span elements
+12. **DON'T skip performance monitoring** - Always track Core Web Vitals
+13. **DON'T create unmemoized list components** - Use React.memo for all list items
+14. **DON'T ignore type safety in performance code** - Define proper interfaces
 
 ## 🧩 Component Patterns
 
@@ -66,7 +86,7 @@ app/
 ```typescript
 'use client'; // Only if using browser APIs or state
 
-import { useState, useEffect } from 'react';
+import { memo, useState, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -74,22 +94,75 @@ interface ComponentProps {
   // Always define props interface
   className?: string;
   children?: React.ReactNode;
+  // Add other props with proper types
 }
 
-export default function Component({ className, children }: ComponentProps) {
-  // Component logic here
+const Component = memo<ComponentProps>(({ className, children, ...props }) => {
+  // Memoize event handlers
+  const handleClick = useCallback(() => {
+    // Event handler logic
+  }, []);
+
+  // Memoize computed values
+  const computedValue = useMemo(() => {
+    // Computation logic
+  }, []);
+
   return (
     <div className={cn("base-classes", className)}>
       {children}
     </div>
   );
+});
+
+Component.displayName = 'Component';
+
+export default Component;
+```
+
+### Optimized List Component Pattern
+```typescript
+import { memo, useMemo, useCallback } from 'react';
+
+interface ListItemProps {
+  item: Item;
+  onSelect: (id: string) => void;
+  isSelected: boolean;
 }
+
+const OptimizedListItem = memo<ListItemProps>(({ item, onSelect, isSelected }) => {
+  const handleClick = useCallback(() => {
+    onSelect(item.id);
+  }, [item.id, onSelect]);
+
+  const badges = useMemo(() => {
+    return item.tags.map((tag) => (
+      <span 
+        key={tag}
+        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground"
+      >
+        {tag}
+      </span>
+    ));
+  }, [item.tags]);
+
+  return (
+    <div onClick={handleClick} className={cn("cursor-pointer", isSelected && "bg-accent")}>
+      <h3>{item.name}</h3>
+      <p>{item.description}</p>
+      <div className="flex gap-1 flex-wrap">{badges}</div>
+    </div>
+  );
+});
+
+OptimizedListItem.displayName = 'OptimizedListItem';
 ```
 
 ### State Management
 - **Local state**: Use `useState` for component-specific state
-- **Global state**: Use Zustand stores in [lib/store/](mdc:lib/store/)
+- **Global state**: Use Zustand stores in [lib/store/](mdc:lib/store)
 - **Context**: Use React Context for UI state (sidebar, theme)
+- **Optimized state**: Use `useOptimizedState` hook for performance-critical state
 
 ## 🎨 Design System
 
@@ -108,6 +181,7 @@ export default function Component({ className, children }: ComponentProps) {
 - Use `cn()` utility from [lib/utils.ts](mdc:lib/utils.ts) for conditional classes
 - Leverage shadcn/ui component variants
 - Follow the design tokens in [tailwind.config.ts](mdc:tailwind.config.ts)
+- **Avoid Badge components in lists** - Use optimized span elements for better performance
 
 ## 🔧 Tool Development Guidelines
 
@@ -117,23 +191,24 @@ export default function Component({ className, children }: ComponentProps) {
 3. **Use consistent layout** with existing tools
 4. **Implement proper error handling** for user inputs
 5. **Add to integrations** in data files
+6. **Apply performance optimizations** - Use memoization and optimized components
 
 ### Tool Component Structure
 ```typescript
 'use client';
 
-import { useState } from 'react';
+import { memo, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
-export default function ToolPage() {
+const ToolPage = memo(() => {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   
-  const handleProcess = () => {
+  const handleProcess = useCallback(() => {
     // Tool logic here
-  };
+  }, []);
 
   return (
     <div className="container mx-auto p-4">
@@ -157,7 +232,11 @@ export default function ToolPage() {
       </Card>
     </div>
   );
-}
+});
+
+ToolPage.displayName = 'ToolPage';
+
+export default ToolPage;
 ```
 
 ## 🚀 Performance Guidelines
@@ -168,6 +247,27 @@ export default function ToolPage() {
 3. **Optimize images** with Next.js Image component
 4. **Minimize bundle size** by avoiding unnecessary dependencies
 5. **Use React.memo** for expensive components
+6. **Monitor Core Web Vitals** with web-vitals package
+7. **Use optimized components** from [components/optimized/](mdc:components/optimized)
+
+### Performance Monitoring
+```typescript
+// Initialize web vitals in root layout
+import { initWebVitals } from '@/lib/performance/web-vitals';
+
+useEffect(() => {
+  initWebVitals();
+}, []);
+
+// Use performance monitoring hook
+import { usePerformanceMonitoring } from '@/lib/performance/web-vitals';
+
+function PerformanceAwareComponent() {
+  const { metrics, analysis } = usePerformanceMonitoring();
+  
+  // Component logic
+}
+```
 
 ### Code Splitting
 ```typescript
@@ -233,6 +333,21 @@ try {
 - [ ] Error states display correctly
 - [ ] Loading states are implemented
 - [ ] Accessibility features work (keyboard navigation, screen readers)
+- [ ] Performance benchmarks are met (see [__tests__/performance.test.ts](mdc:__tests__/performance.test.ts))
+
+### Performance Testing
+```typescript
+// Performance benchmark example
+describe('Performance Benchmarks', () => {
+  it('should render large list efficiently', () => {
+    const startTime = performance.now();
+    render(<OptimizedList items={largeItemList} />);
+    const endTime = performance.now();
+    
+    expect(endTime - startTime).toBeLessThan(100); // 100ms threshold
+  });
+});
+```
 
 ## 📋 Code Review Guidelines
 
@@ -243,5 +358,67 @@ try {
 4. **Verify responsive design** - Test on multiple screen sizes
 5. **Check accessibility** - Ensure keyboard navigation works
 6. **Review performance** - No unnecessary re-renders or memory leaks
+7. **Run performance tests** - `npm test -- __tests__/performance.test.ts`
+8. **Check bundle size** - `npm run analyze` for bundle analysis
 
-Remember: **Quality over speed** - Take time to implement features correctly rather than rushing and introducing technical debt.
+### Performance Review Checklist
+- [ ] Components use React.memo where appropriate
+- [ ] Event handlers are memoized with useCallback
+- [ ] Computed values are memoized with useMemo
+- [ ] Badge elements are implemented as optimized spans
+- [ ] Type safety is maintained in performance-critical code
+- [ ] Web vitals are being tracked
+
+## 🔄 Updated Component Guidelines
+
+### Badge Element Optimization
+```typescript
+// ❌ DON'T use Badge component in lists
+import { Badge } from '@/components/ui/badge';
+
+// ✅ DO use optimized span elements
+<span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
+  {badge}
+</span>
+```
+
+### Search Result Type Safety
+```typescript
+// Define proper interfaces for search results
+interface SearchResult {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+}
+
+interface HighlightedSearchResult extends SearchResult {
+  highlightedTitle: string;
+  highlightedDescription: string;
+}
+
+// Use proper typing in memoized computations
+const highlightedResults = useMemo((): HighlightedSearchResult[] => {
+  // Implementation with proper type safety
+}, [results, query]);
+```
+
+## 📊 Performance Monitoring Commands
+
+### Available Commands
+```bash
+# Bundle analysis
+npm run analyze
+
+# Performance tests
+npm test -- __tests__/performance.test.ts
+
+# All tests
+npm test
+
+# Development with monitoring
+npm run dev
+```
+
+Remember: **Quality over speed** - Take time to implement features correctly rather than rushing and introducing technical debt. Always prioritize performance and type safety in your implementations.
+

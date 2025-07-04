@@ -1,6 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Copy, Calendar, Clock, AlertTriangle } from 'lucide-react';
 
 export default function TimestampPage() {
     const [timestampInput, setTimestampInput] = useState('');
@@ -52,46 +56,113 @@ export default function TimestampPage() {
         }
     };
 
+    const getCurrentTimestamp = () => {
+        const now = Math.floor(Date.now() / 1000);
+        setTimestampInput(now.toString());
+        convertTimestampToDateTime();
+    };
+
+    const getCurrentDateTime = () => {
+        const now = new Date().toISOString().slice(0, 16);
+        setDateTimeInput(now);
+        convertDateTimeToTimestamp();
+    };
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+    };
+
     return (
-        <div className='flex flex-col items-center justify-center min-h-screen py-2'>
-            <h1 className='text-4xl font-bold mb-8'>Timestamp Converter</h1>
-            <div className='flex w-full max-w-4xl space-x-4 mb-8'>
-                <div className='flex flex-col flex-1'>
-                    <h2 className='text-2xl font-semibold mb-4'>Timestamp to Date/Time</h2>
-                    <input
-                        type='text'
-                        className='w-full p-2 border rounded-md mb-2'
-                        placeholder='Enter Unix Timestamp (seconds)'
-                        value={timestampInput}
-                        onChange={(e) => setTimestampInput(e.target.value)}
-                    />
-                    <button
-                        className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'
-                        onClick={convertTimestampToDateTime}
-                    >
-                        Convert
-                    </button>
-                    <p className='mt-4 text-lg'>Result: {dateTimeOutput}</p>
-                </div>
-                <div className='flex flex-col flex-1'>
-                    <h2 className='text-2xl font-semibold mb-4'>Date/Time to Timestamp</h2>
-                    <input
-                        type='text'
-                        className='w-full p-2 border rounded-md mb-2'
-                        placeholder='Enter Date/Time (e.g., YYYY-MM-DD HH:MM:SS)'
-                        value={dateTimeInput}
-                        onChange={(e) => setDateTimeInput(e.target.value)}
-                    />
-                    <button
-                        className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'
-                        onClick={convertDateTimeToTimestamp}
-                    >
-                        Convert
-                    </button>
-                    <p className='mt-4 text-lg'>Result: {timestampOutput}</p>
-                </div>
+        <div className='container mx-auto py-8 px-4'>
+            <div className='text-center mb-8'>
+                <h1 className='text-4xl font-bold mb-2'>Timestamp Converter</h1>
+                <p className='text-muted-foreground'>Convert between Unix timestamps and human-readable dates</p>
             </div>
-            {error && <p className='text-red-500'>Error: {error}</p>}
+
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6'>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className='flex items-center gap-2'>
+                            <Clock className='h-5 w-5' />
+                            Timestamp to Date/Time
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className='space-y-4'>
+                        <div className='flex gap-2'>
+                            <Input
+                                type='text'
+                                placeholder='Enter Unix Timestamp (seconds)'
+                                value={timestampInput}
+                                onChange={(e) => setTimestampInput(e.target.value)}
+                                className='flex-1'
+                            />
+                            <Button variant='outline' onClick={getCurrentTimestamp}>
+                                Now
+                            </Button>
+                        </div>
+                        <Button
+                            onClick={convertTimestampToDateTime}
+                            className='w-full'
+                            disabled={!timestampInput.trim()}
+                        >
+                            Convert to Date/Time
+                        </Button>
+                        {dateTimeOutput && (
+                            <div className='flex items-center gap-2 p-3 bg-muted rounded-md'>
+                                <span className='flex-1 font-mono'>{dateTimeOutput}</span>
+                                <Button variant='outline' size='sm' onClick={() => copyToClipboard(dateTimeOutput)}>
+                                    <Copy className='h-4 w-4' />
+                                </Button>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className='flex items-center gap-2'>
+                            <Calendar className='h-5 w-5' />
+                            Date/Time to Timestamp
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className='space-y-4'>
+                        <div className='flex gap-2'>
+                            <Input
+                                type='datetime-local'
+                                placeholder='Enter Date/Time'
+                                value={dateTimeInput}
+                                onChange={(e) => setDateTimeInput(e.target.value)}
+                                className='flex-1'
+                            />
+                            <Button variant='outline' onClick={getCurrentDateTime}>
+                                Now
+                            </Button>
+                        </div>
+                        <Button
+                            onClick={convertDateTimeToTimestamp}
+                            className='w-full'
+                            disabled={!dateTimeInput.trim()}
+                        >
+                            Convert to Timestamp
+                        </Button>
+                        {timestampOutput && (
+                            <div className='flex items-center gap-2 p-3 bg-muted rounded-md'>
+                                <span className='flex-1 font-mono'>{timestampOutput}</span>
+                                <Button variant='outline' size='sm' onClick={() => copyToClipboard(timestampOutput)}>
+                                    <Copy className='h-4 w-4' />
+                                </Button>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+
+            {error && (
+                <div className='flex items-center gap-2 p-3 bg-muted rounded-md'>
+                    <AlertTriangle className='h-4 w-4 text-destructive' />
+                    <span className='flex-1 font-mono'>{error}</span>
+                </div>
+            )}
         </div>
     );
 }
