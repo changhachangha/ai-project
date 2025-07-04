@@ -229,7 +229,7 @@ totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architec
                     </CardHeader>
                     <CardContent>
                         <div className='grid grid-cols-2 md:grid-cols-5 gap-3'>
-                            {stats.mostCommonWords.map(({ word, count }, index) => (
+                            {stats.mostCommonWords.map(({ word, count }) => (
                                 <div key={word} className='flex items-center justify-between p-3 bg-muted rounded-lg'>
                                     <span className='text-sm font-medium truncate'>{word}</span>
                                     <Badge variant='secondary'>{count}</Badge>

@@ -149,7 +149,10 @@ const MorseCodeClient = memo(() => {
     const playMorse = useCallback((morseCode: string) => {
         if (!morseCode.trim()) return;
 
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const AudioContextClass =
+            window.AudioContext ||
+            (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        const audioContext = new AudioContextClass();
         const frequency = 600; // Hz
         const dotDuration = 100; // ms
         const dashDuration = 300; // ms
@@ -373,7 +376,7 @@ const MorseCodeClient = memo(() => {
                         • <strong>문자 구분:</strong> Morse 코드에서 각 문자는 공백으로 구분
                     </p>
                     <p>
-                        • <strong>단어 구분:</strong> 단어 간 구분은 '/' 기호 사용
+                        • <strong>단어 구분:</strong> 단어 간 구분은 &apos;/&apos; 기호 사용
                     </p>
                     <p>
                         • <strong>지원 문자:</strong> 영문자(A-Z), 숫자(0-9), 기본 특수문자
