@@ -1,5 +1,20 @@
 // app/data/text-tools.ts
-import { FileJson, GitCompare, Regex, FileText, Table, Database, FileType } from 'lucide-react';
+import {
+    FileJson,
+    GitCompare,
+    Regex,
+    FileText,
+    Table,
+    Database,
+    FileType,
+    Code,
+    FileCode,
+    FileX,
+    BarChart3,
+    Grid3X3,
+    Lock,
+    ArrowUpDown,
+} from 'lucide-react';
 import type { Integration } from './types';
 
 export const textTools: Integration[] = [
@@ -54,9 +69,65 @@ export const textTools: Integration[] = [
     {
         id: 'lorem-ipsum',
         name: 'Lorem Ipsum 생성기',
-        description: '다양한 형태의 더미 텍스트를 생성합니다.',
+        description: '다양한 형태의 Lorem Ipsum 텍스트를 생성합니다.',
         category: '텍스트 처리',
         icon: FileType,
-        color: '#FFA07A',
+        color: '#F39C12',
+    },
+    {
+        id: 'yaml-json-converter',
+        name: 'YAML ↔️ JSON 변환기',
+        description: 'YAML과 JSON 형식 간 데이터를 변환합니다.',
+        category: '텍스트 처리',
+        icon: Code,
+        color: '#9B59B6',
+    },
+    {
+        id: 'code-formatter',
+        name: '코드 포맷터',
+        description: 'JavaScript, CSS, HTML 등 다양한 코드를 정리하고 포맷팅합니다.',
+        category: '텍스트 처리',
+        icon: FileCode,
+        color: '#E67E22',
+    },
+    {
+        id: 'xml-formatter',
+        name: 'XML 포매터/검증기',
+        description: 'XML 데이터를 정리하고 유효성을 검사합니다.',
+        category: '텍스트 처리',
+        icon: FileX,
+        color: '#E74C3C',
+    },
+    {
+        id: 'text-analyzer',
+        name: '텍스트 분석기',
+        description: '단어 수, 문자 수, 읽기 시간 등 텍스트 통계를 분석합니다.',
+        category: '텍스트 처리',
+        icon: BarChart3,
+        color: '#3498DB',
+    },
+    {
+        id: 'markdown-table-generator',
+        name: '마크다운 테이블 생성기',
+        description: '시각적으로 마크다운 테이블을 생성하고 편집합니다.',
+        category: '텍스트 처리',
+        icon: Grid3X3,
+        color: '#2ECC71',
+    },
+    {
+        id: 'text-encryptor',
+        name: '텍스트 암호화 도구',
+        description: '간단한 텍스트 암호화 및 복호화를 수행합니다.',
+        category: '텍스트 처리',
+        icon: Lock,
+        color: '#8E44AD',
+    },
+    {
+        id: 'line-break-converter',
+        name: '줄바꿈 변환기',
+        description: 'Unix, Windows, Mac 간 줄바꿈 형식을 변환합니다.',
+        category: '텍스트 처리',
+        icon: ArrowUpDown,
+        color: '#16A085',
     },
 ];

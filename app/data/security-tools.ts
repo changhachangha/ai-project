@@ -1,5 +1,5 @@
 // app/data/security-tools.ts
-import { Key, KeyRound, Hash, Shield, Lock } from 'lucide-react';
+import { Key, KeyRound, Hash, Shield, Lock, FileKey, Award, Smartphone } from 'lucide-react';
 import type { Integration } from './types';
 
 export const securityTools: Integration[] = [
@@ -42,5 +42,29 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Lock,
         color: '#27AE60',
+    },
+    {
+        id: 'aes-encryptor',
+        name: 'AES 암호화/복호화',
+        description: 'AES 알고리즘을 사용하여 텍스트를 암호화하고 복호화합니다.',
+        category: '보안/암호화',
+        icon: FileKey,
+        color: '#D35400',
+    },
+    {
+        id: 'certificate-analyzer',
+        name: '인증서 정보 분석기',
+        description: 'SSL/TLS 인증서 정보를 분석하고 유효성을 검사합니다.',
+        category: '보안/암호화',
+        icon: Award,
+        color: '#7F8C8D',
+    },
+    {
+        id: 'totp-generator',
+        name: '2FA QR 코드 생성기',
+        description: 'TOTP 기반 2단계 인증용 QR 코드를 생성합니다.',
+        category: '보안/암호화',
+        icon: Smartphone,
+        color: '#9B59B6',
     },
 ];

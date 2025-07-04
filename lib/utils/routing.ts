@@ -3,11 +3,11 @@
  * 모든 카테고리-경로 매핑을 한 곳에서 관리
  */
 
-export interface CategoryMapping {
+type CategoryMapping = {
     category: string;
     path: string;
     description: string;
-}
+};
 
 /**
  * 카테고리별 경로 매핑 테이블
@@ -28,6 +28,11 @@ export const CATEGORY_PATH_MAPPINGS: CategoryMapping[] = [
         category: '진수 변환',
         path: 'encoding',
         description: '2진수, 8진수, 16진수 변환',
+    },
+    {
+        category: '특수 인코딩',
+        path: 'encoding',
+        description: 'Morse 코드, Caesar 암호 등',
     },
     {
         category: '텍스트 처리',
@@ -54,22 +59,26 @@ export const CATEGORY_PATH_MAPPINGS: CategoryMapping[] = [
         path: 'conversion',
         description: 'UUID 생성기, QR 코드 생성기 등',
     },
+    {
+        category: '개발자 도구',
+        path: 'developer',
+        description: 'API 테스터, 네트워크 도구, Cron 생성기 등',
+    },
 ];
 
 /**
- * 카테고리 이름을 URL 경로로 변환
- * @param category 카테고리 이름
- * @returns 해당하는 URL 경로
+ * 카테고리 이름으로부터 해당하는 경로를 반환
  */
 export function getPathForCategory(category: string): string {
     const mapping = CATEGORY_PATH_MAPPINGS.find((m) => m.category === category);
+    return mapping ? mapping.path : 'encoding'; // 기본값은 encoding
+}
 
-    if (!mapping) {
-        console.warn(`⚠️ 알 수 없는 카테고리: "${category}". encoding 경로로 기본 설정됩니다.`);
-        return 'encoding';
-    }
-
-    return mapping.path;
+/**
+ * 경로로부터 해당하는 카테고리들을 반환
+ */
+export function getCategoriesForPath(path: string): string[] {
+    return CATEGORY_PATH_MAPPINGS.filter((m) => m.path === path).map((m) => m.category);
 }
 
 /**
@@ -77,13 +86,6 @@ export function getPathForCategory(category: string): string {
  */
 export function getAllCategories(): string[] {
     return CATEGORY_PATH_MAPPINGS.map((m) => m.category);
-}
-
-/**
- * 경로별 카테고리 목록 반환
- */
-export function getCategoriesByPath(path: string): string[] {
-    return CATEGORY_PATH_MAPPINGS.filter((m) => m.path === path).map((m) => m.category);
 }
 
 /**
