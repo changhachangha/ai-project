@@ -149,9 +149,8 @@ const MorseCodeClient = memo(() => {
     const playMorse = useCallback((morseCode: string) => {
         if (!morseCode.trim()) return;
 
-        const AudioContextClass =
-            window.AudioContext ||
-            (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
         const audioContext = new AudioContextClass();
         const frequency = 600; // Hz
         const dotDuration = 100; // ms

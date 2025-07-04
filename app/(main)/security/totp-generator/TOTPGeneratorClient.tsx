@@ -24,6 +24,7 @@ const TOTPGeneratorClient = memo(() => {
     const [timeRemaining, setTimeRemaining] = useState(30);
 
     // Base32 인코딩 함수 (간단한 구현)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const base32Encode = useCallback((input: string) => {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
         let bits = '';

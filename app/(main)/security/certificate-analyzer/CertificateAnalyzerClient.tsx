@@ -63,7 +63,7 @@ const CertificateAnalyzerClient = memo(() => {
 
             setCertificateInfo(mockCertInfo);
             toast.success('인증서 정보를 가져왔습니다!');
-        } catch (err) {
+        } catch {
             setError('인증서 정보를 가져오는데 실패했습니다.');
             toast.error('인증서 분석에 실패했습니다.');
         } finally {
@@ -105,8 +105,8 @@ const CertificateAnalyzerClient = memo(() => {
 
             setCertificateInfo(mockCertInfo);
             toast.success('인증서가 분석되었습니다!');
-        } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : '인증서 분석에 실패했습니다.');
+        } catch {
+            setError('인증서 분석에 실패했습니다.');
             toast.error('인증서 분석에 실패했습니다.');
         }
     }, [certificateText]);
