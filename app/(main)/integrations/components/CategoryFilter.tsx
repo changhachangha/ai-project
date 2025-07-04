@@ -10,20 +10,7 @@ import { ChevronDown, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
-// --- 추가: 카테고리 이름을 URL 경로로 변환하는 헬퍼 함수 ---
-const getPathForCategory = (category: string) => {
-    switch (category) {
-        case '텍스트 처리':
-            return 'text';
-        case '보안/암호화':
-            return 'security';
-        case '시간/날짜':
-        case '색상':
-            return 'conversion';
-        default:
-            return 'encoding';
-    }
-};
+import { getPathForCategory } from '@/lib/utils/routing';
 
 type CategoryFilterProps = {
     groupedTools: {

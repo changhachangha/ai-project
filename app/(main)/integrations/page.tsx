@@ -11,20 +11,7 @@ import IntegrationGrid from './components/IntegrationGrid';
 import SearchBar from './components/SearchBar';
 import SortOptions from './components/SortOptions'; // --- 추가된 부분 ---
 
-// 카테고리 이름을 URL 경로로 변환하는 헬퍼 함수
-const getPathForCategory = (category: string) => {
-    switch (category) {
-        case '텍스트 처리':
-            return 'text';
-        case '보안/암호화':
-            return 'security';
-        case '시간/날짜':
-        case '색상':
-            return 'conversion';
-        default:
-            return 'encoding';
-    }
-};
+import { getPathForCategory } from '@/lib/utils/routing';
 
 const sortOptions = [
     { value: 'name-asc', label: 'Name (A-Z)' },

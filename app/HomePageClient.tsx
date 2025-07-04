@@ -10,27 +10,12 @@ import IntegrationGrid from '@/app/(main)/integrations/components/IntegrationGri
 import Pagination from '@/app/(main)/integrations/components/Pagination';
 import SearchBar from '@/app/(main)/integrations/components/SearchBar';
 import SortOptions from '@/app/(main)/integrations/components/SortOptions';
-import { Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
-import { useSidebar } from '@/lib/context/SidebarContext';
 
 const MotionH1 = dynamic(() => import('framer-motion').then((mod) => mod.motion.h1), { ssr: false });
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
-const getPathForCategory = (category: string) => {
-    switch (category) {
-        case '텍스트 처리':
-            return 'text';
-        case '보안/암호화':
-            return 'security';
-        case '시간/날짜':
-        case '색상':
-            return 'conversion';
-        default:
-            return 'encoding';
-    }
-};
+import { getPathForCategory } from '@/lib/utils/routing';
 
 const ITEMS_PER_PAGE = 30;
 
@@ -46,7 +31,6 @@ export default function HomePageClient() {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortOption, setSortOption] = useState('name-asc');
     const [favorites, setFavorites] = useState<string[]>([]);
-    const { setSidebarOpen } = useSidebar();
 
     useEffect(() => {
         const savedFavorites = localStorage.getItem('favoriteIntegrations');
@@ -111,14 +95,6 @@ export default function HomePageClient() {
             <main className='flex-1 flex flex-col overflow-y-auto'>
                 <div className='flex-1 p-4 md:p-6 space-y-4'>
                     <header className='flex items-center gap-4'>
-                        <Button
-                            variant='outline'
-                            size='icon'
-                            className='md:hidden border-border text-foreground hover:bg-accent hover:text-accent-foreground'
-                            onClick={() => setSidebarOpen(true)}
-                        >
-                            <Menu className='h-5 w-5' />
-                        </Button>
                         <MotionH1
                             className='text-2xl font-bold text-foreground'
                             initial={{ opacity: 0, y: -20 }}

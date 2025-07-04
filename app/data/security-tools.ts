@@ -1,5 +1,5 @@
 // app/data/security-tools.ts
-import { Key, KeyRound, Hash } from 'lucide-react';
+import { Key, KeyRound, Hash, Shield, Lock } from 'lucide-react';
 import type { Integration } from './types';
 
 export const securityTools: Integration[] = [
@@ -26,5 +26,21 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Hash,
         color: '#8E44AD',
+    },
+    {
+        id: 'jwt-decoder',
+        name: 'JWT 토큰 디코더',
+        description: 'JWT 토큰을 디코딩하고 헤더, 페이로드, 서명을 검증합니다.',
+        category: '보안/암호화',
+        icon: Shield,
+        color: '#E74C3C',
+    },
+    {
+        id: 'password-generator',
+        name: '패스워드 생성기',
+        description: '안전한 패스워드를 생성하고 강도를 평가합니다.',
+        category: '보안/암호화',
+        icon: Lock,
+        color: '#27AE60',
     },
 ];

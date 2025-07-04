@@ -1,5 +1,5 @@
 // app/data/text-tools.ts
-import { FileJson, GitCompare, Regex, FileText, Table } from 'lucide-react';
+import { FileJson, GitCompare, Regex, FileText, Table, Database, FileType } from 'lucide-react';
 import type { Integration } from './types';
 
 export const textTools: Integration[] = [
@@ -42,5 +42,21 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: Table,
         color: '#FFB6C1',
+    },
+    {
+        id: 'sql-formatter',
+        name: 'SQL 포매터',
+        description: 'SQL 쿼리를 정리하고 가독성을 개선합니다.',
+        category: '텍스트 처리',
+        icon: Database,
+        color: '#4ECDC4',
+    },
+    {
+        id: 'lorem-ipsum',
+        name: 'Lorem Ipsum 생성기',
+        description: '다양한 형태의 더미 텍스트를 생성합니다.',
+        category: '텍스트 처리',
+        icon: FileType,
+        color: '#FFA07A',
     },
 ];
