@@ -1,65 +1,61 @@
-'use client';
-
-// import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import React, { useState, useCallback, useEffect } from 'react';
 import './globals.css';
-import CommandPalette from '@/components/command-palette/CommandPalette';
-import { SidebarProvider } from '@/lib/context/SidebarContext';
-import { ThemeProvider } from '@/components/theme-provider';
-import { ErrorBoundary } from '@/components/error-boundary';
-import { Toaster } from '@/components/ui/sonner';
-import { initWebVitals } from '@/lib/performance/web-vitals';
+import AppProviders from '@/components/app-providers';
+import { SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME, SITE_URL } from '@/lib/site';
 
 const inter = Inter({ subsets: ['latin'] });
 
-// export const metadata: Metadata = {
-//     title: 'DevTools Hub',
-//     description: 'A collection of developer tools.',
-// };
+export const metadata: Metadata = {
+    metadataBase: new URL(SITE_URL),
+    title: {
+        default: `${SITE_NAME} - 개발 도구 허브`,
+        template: `%s | ${SITE_NAME}`,
+    },
+    description: SITE_DESCRIPTION,
+    applicationName: SITE_NAME,
+    keywords: SITE_KEYWORDS,
+    alternates: {
+        canonical: '/',
+    },
+    openGraph: {
+        type: 'website',
+        siteName: SITE_NAME,
+        title: `${SITE_NAME} - 개발 도구 허브`,
+        description: SITE_DESCRIPTION,
+        url: SITE_URL,
+        locale: 'ko_KR',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: `${SITE_NAME} - 개발 도구 허브`,
+        description: SITE_DESCRIPTION,
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-image-preview': 'large',
+        },
+    },
+};
+
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    themeColor: [
+        { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+        { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    ],
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-    const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
-
-    const toggleCommandPalette = useCallback(() => {
-        setIsCommandPaletteOpen((prev) => !prev);
-    }, []);
-
-    // 웹 바이탈 초기화
-    useEffect(() => {
-        initWebVitals();
-    }, []);
-
-    // Add global keyboard shortcut listener
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-                event.preventDefault();
-                toggleCommandPalette();
-            }
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [toggleCommandPalette]);
-
     return (
-        <html lang='en' suppressHydrationWarning>
+        <html lang='ko' suppressHydrationWarning>
             <body className={inter.className}>
-                <ThemeProvider attribute='class' defaultTheme='light' enableSystem disableTransitionOnChange>
-                    <ErrorBoundary>
-                        <SidebarProvider>
-                            {children}
-                            <CommandPalette
-                                isOpen={isCommandPaletteOpen}
-                                onClose={() => setIsCommandPaletteOpen(false)}
-                                togglePalette={toggleCommandPalette}
-                            />
-                        </SidebarProvider>
-                        <Toaster />
-                    </ErrorBoundary>
-                </ThemeProvider>
+                <AppProviders>{children}</AppProviders>
             </body>
         </html>
     );

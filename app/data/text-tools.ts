@@ -14,6 +14,7 @@ import {
     Grid3X3,
     Lock,
     ArrowUpDown,
+    CaseSensitive,
 } from 'lucide-react';
 import type { Integration } from './types';
 
@@ -129,5 +130,13 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: ArrowUpDown,
         color: '#16A085',
+    },
+    {
+        id: 'case-converter',
+        name: '텍스트 케이스 변환기',
+        description: 'camelCase, snake_case, kebab-case 등 9가지 표기법으로 변환합니다.',
+        category: '텍스트 처리',
+        icon: CaseSensitive,
+        color: '#E67E22',
     },
 ];
