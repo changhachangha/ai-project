@@ -227,7 +227,7 @@ CI에서는 위 항목이 모두 통과해야 `main` 병합이 가능합니다 (
 -   **리포 위생**: 재생성 가능한 산출물(`repomix-output.xml`, `.vooster/`, `public/sw.js`, `public/workbox-*.js`) 추적 해제 및 `.gitignore` 정리
 -   **문서 정합화**: README 구조도·도구 목록·로드맵을 실제 코드 기준으로 갱신, `LICENSE`(MIT) 추가, `docs/API.md` 신규
 -   **SEO 기반 추가**: `robots.txt` · `sitemap.xml` · 사이트 메타데이터(OG/Twitter) 적용
--   **테스트 보강**: `lib/tools` 순수 로직 단위 테스트 8종 추가
+-   **테스트 보강**: `lib/tools` 순수 로직 단위 테스트 8종 + **도구 라우트 전수 스모크 테스트**(47개 라우트 · 190 케이스). 스모크 테스트에서 `markdown-table-generator`의 렌더 중 상태 변경(무한 재렌더) 버그를 발견해 수정
 -   **버그 수정**: `text-encryptor` 도구의 `page.tsx` 누락(404) 수정, `validate-routing` 스크립트가 매핑을 중복 정의해 실제 매핑과 어긋나던 문제 수정
 -   **번들 최적화**: `node-forge`·`crypto-js`를 동적 로딩으로 전환 — `/security/public-key-extractor` First Load JS 223kB → 148kB, `/security/hash-tool` 171kB → 147kB. `npm run analyze`로 번들 리포트 생성 가능
 -   **🆕 새 도구**: **텍스트 케이스 변환기** (`/text/case-converter`) — camelCase·snake_case·kebab-case 등 9가지 표기법 변환
