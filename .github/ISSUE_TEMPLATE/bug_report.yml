@@ -1,0 +1,49 @@
+name: 🐛 버그 리포트
+description: 도구가 오작동하거나 화면이 깨지는 경우
+title: '[Bug] '
+labels: ['bug']
+body:
+    - type: input
+      id: tool
+      attributes:
+          label: 문제가 발생한 도구/페이지
+          placeholder: '예: /encoding/base64, /security/jwt-decoder'
+      validations:
+          required: true
+
+    - type: textarea
+      id: steps
+      attributes:
+          label: 재현 절차
+          placeholder: |
+              1. 페이지 접속
+              2. 입력값 '...' 입력
+              3. 버튼 클릭
+      validations:
+          required: true
+
+    - type: textarea
+      id: expected
+      attributes:
+          label: 기대한 동작
+      validations:
+          required: true
+
+    - type: textarea
+      id: actual
+      attributes:
+          label: 실제 동작 (오류 메시지/콘솔 로그 포함)
+      validations:
+          required: true
+
+    - type: dropdown
+      id: environment
+      attributes:
+          label: 환경
+          multiple: true
+          options:
+              - 데스크톱 Chrome
+              - 데스크톱 Safari
+              - 데스크톱 Firefox
+              - 모바일 iOS
+              - 모바일 Android

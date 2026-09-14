@@ -1,0 +1,47 @@
+name: 🧰 도구 추가/개선 요청
+description: 새로운 개발 도구를 제안하거나 기존 도구 개선을 요청합니다
+title: '[Tool] '
+labels: ['enhancement']
+body:
+    - type: input
+      id: name
+      attributes:
+          label: 도구 이름
+          placeholder: '예: JWT 인코더'
+      validations:
+          required: true
+
+    - type: dropdown
+      id: category
+      attributes:
+          label: 카테고리
+          options:
+              - encoding (인코딩)
+              - conversion (변환)
+              - text (텍스트)
+              - security (보안)
+              - developer (개발자)
+              - 새 카테고리 제안
+      validations:
+          required: true
+
+    - type: textarea
+      id: purpose
+      attributes:
+          label: 용도와 기대 동작
+          placeholder: 어떤 상황에서 쓰고, 입력/출력이 어떻게 되어야 하는지
+      validations:
+          required: true
+
+    - type: textarea
+      id: reference
+      attributes:
+          label: 참고 서비스/라이브러리 (선택)
+          placeholder: '예: cyberchef, jwt.io'
+
+    - type: checkboxes
+      id: contribute
+      attributes:
+          label: 기여 의사
+          options:
+              - label: 직접 구현해서 PR을 올릴 의사가 있습니다

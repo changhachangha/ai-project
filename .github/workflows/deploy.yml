@@ -1,16 +1,31 @@
 name: Deploy to Vercel
 
+# CI(Lint/Type-check/Test/Build)가 main에서 성공한 뒤에만 프로덕션 배포를 수행한다.
+# 검증을 통과하지 못한 코드가 프로덕션에 올라가는 것을 방지한다.
 on:
-    push:
-        branches:
-            - main # or master, depending on your default branch
+    workflow_run:
+        workflows: ['CI']
+        types: [completed]
+        branches: [main]
+
+permissions:
+    contents: read
+    actions: read
 
 jobs:
     deploy:
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.workflow_run.head_sha }}
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
 
             - name: Install Vercel CLI
               run: npm install --global vercel@latest
