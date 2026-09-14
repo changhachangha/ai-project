@@ -10,6 +10,8 @@ const customJestConfig = {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     testEnvironment: 'jsdom',
     testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+    // .next 산출물이 haste map 에 잡혀 "naming collision" 경고가 나는 것을 방지
+    modulePathIgnorePatterns: ['<rootDir>/.next/'],
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
     },
