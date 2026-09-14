@@ -1,5 +1,5 @@
 import { DiffToolInput, DiffToolOutput } from '@/lib/types/tools';
-import { diffChars, diffLines, diffWords, Change } from 'jsdiff';
+import { diffChars, diffLines, diffWords, Change } from 'diff';
 
 export const processDiff = (input: DiffToolInput, type: 'chars' | 'words' | 'lines'): DiffToolOutput => {
     let diffResult = '';

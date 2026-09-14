@@ -10,7 +10,13 @@ type PaginationProps = {
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   return (
     <div className="flex justify-center items-center space-x-2">
-      <Button variant="outline" size="icon" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1}>
+      <Button
+        variant="outline"
+        size="icon"
+        aria-label="이전 페이지"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
         <ChevronLeft className="h-4 w-4" />
       </Button>
       <span className="text-sm">
@@ -19,6 +25,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <Button
         variant="outline"
         size="icon"
+        aria-label="다음 페이지"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >

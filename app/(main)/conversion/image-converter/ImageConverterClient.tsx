@@ -169,7 +169,7 @@ const ImageConverterClient = memo(() => {
         <div className='container mx-auto p-4 max-w-4xl'>
             <div className='text-center mb-8'>
                 <h1 className='text-3xl font-bold flex items-center justify-center gap-2'>
-                    <Image className='h-8 w-8' />
+                    <Image className='h-8 w-8' aria-hidden='true' />
                     이미지 변환기
                 </h1>
                 <p className='text-muted-foreground mt-2'>이미지 형식을 변환하고 크기를 조정하세요.</p>

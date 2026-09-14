@@ -30,10 +30,10 @@ export default function FeaturedIntegrations({ integrations, onSelect }: Feature
             <h2 className='text-lg font-semibold mb-4'>Featured Integrations</h2>
 
             <div className='absolute top-0 right-0 flex space-x-2'>
-                <Button variant='outline' size='icon' onClick={() => scroll('left')}>
+                <Button variant='outline' size='icon' aria-label='이전 항목으로 스크롤' onClick={() => scroll('left')}>
                     <ChevronLeft className='h-4 w-4' />
                 </Button>
-                <Button variant='outline' size='icon' onClick={() => scroll('right')}>
+                <Button variant='outline' size='icon' aria-label='다음 항목으로 스크롤' onClick={() => scroll('right')}>
                     <ChevronRight className='h-4 w-4' />
                 </Button>
             </div>

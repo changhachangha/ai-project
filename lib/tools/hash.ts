@@ -78,29 +78,32 @@ export function generateHash(input: HashToolInput, options: HashToolOptions): Ha
     }
 }
 
+/**
+ * 알고리즘별 기대 길이 (문자 수).
+ * base64 는 바이트 수 → base64 문자열 길이(패딩 포함)로 환산한 값이다.
+ */
+const HASH_SPECS: Record<string, { hex: number; base64: number }> = {
+    md5: { hex: 32, base64: 24 }, // 16 bytes
+    sha1: { hex: 40, base64: 28 }, // 20 bytes
+    sha256: { hex: 64, base64: 44 }, // 32 bytes
+    sha512: { hex: 128, base64: 88 }, // 64 bytes
+};
+
 export function validateHashFormat(hash: string, algorithm: string): boolean {
-    if (!hash) return false;
+    const value = hash.trim();
+    if (!value) return false;
 
-    // 일반적인 해시 길이 검증
-    const expectedLengths: Record<string, number[]> = {
-        md5: [32], // HEX
-        sha1: [40], // HEX
-        sha256: [64], // HEX
-        sha512: [128], // HEX
-    };
+    const spec = HASH_SPECS[algorithm.toLowerCase()];
+    if (!spec) return false;
 
-    const lengths = expectedLengths[algorithm.toLowerCase()];
-    if (!lengths) return false;
-
-    // HEX 형식 검증
-    const hexPattern = /^[a-fA-F0-9]+$/;
-    if (hexPattern.test(hash) && lengths.includes(hash.length)) {
+    // HEX 형식 + 길이 검증
+    if (/^[a-fA-F0-9]+$/.test(value) && value.length === spec.hex) {
         return true;
     }
 
-    // Base64 형식 검증 (대략적인 길이 체크)
-    const base64Pattern = /^[A-Za-z0-9+/]+=*$/;
-    if (base64Pattern.test(hash)) {
+    // Base64 형식 + 길이 검증
+    // (이전 구현은 base64 패턴만 확인해서 아무 짧은 문자열이나 통과시켰다.)
+    if (/^[A-Za-z0-9+/]+={0,2}$/.test(value) && value.length === spec.base64) {
         return true;
     }
 
