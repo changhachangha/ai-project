@@ -5,6 +5,7 @@
   <img src="https://img.shields.io/badge/React-19.0.0-blue?style=for-the-badge&logo=react" alt="React">
   <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS">
+  <img src="https://github.com/changhachangha/ai-project/actions/workflows/ci.yml/badge.svg" alt="CI">
 </div>
 
 ## 📌 프로젝트 소개
@@ -25,7 +26,7 @@ AI-Project는 개발자와 일반 사용자 모두에게 유용한 다양한 개
 
 ### 필수 요구사항
 
--   Node.js 18.0.0 이상
+-   Node.js 18.18.0 이상 (개발/CI 기준: Node 20·22)
 -   npm 또는 yarn 패키지 매니저
 
 ### 설치 및 실행
@@ -33,7 +34,7 @@ AI-Project는 개발자와 일반 사용자 모두에게 유용한 다양한 개
 1. **저장소 클론**
 
 ```bash
-git clone https://github.com/your-username/ai-project.git
+git clone https://github.com/changhachangha/ai-project.git
 cd ai-project
 ```
 
@@ -73,32 +74,46 @@ npm run start
 
 ```
 ai-project/
-├── app/                      # Next.js App Router
-│   ├── (main)/              # 라우트 그룹
-│   │   ├── encoding/        # 인코딩 도구 페이지들
-│   │   │   ├── base64/      # Base64 인코더/디코더
-│   │   │   ├── base32/      # Base32 인코더/디코더
-│   │   │   ├── hex/         # Hex 변환기
-│   │   │   ├── url/         # URL 인코더/디코더
-│   │   │   ├── html/        # HTML 인코더/디코더
-│   │   │   ├── unicode/     # Unicode 변환기
-│   │   │   └── binary/      # 진수 변환기
-│   │   └── integrations/    # 통합 컴포넌트
-│   ├── data/                # 데이터 정의 파일
-│   │   ├── encoding-tools.ts
-│   │   ├── integrations.ts
-│   │   └── types.ts
-│   ├── layout.tsx           # 루트 레이아웃
-│   ├── page.tsx            # 홈페이지
-│   └── globals.css         # 전역 스타일
-├── components/              # 재사용 가능한 컴포넌트
-│   └── ui/                 # shadcn/ui 컴포넌트
-├── hooks/                   # 커스텀 React 훅
-│   └── useEncoding.ts      # 인코딩/디코딩 로직 훅
-├── lib/                     # 유틸리티 함수
-├── public/                  # 정적 파일
-└── package.json            # 프로젝트 설정
+├── app/                          # Next.js App Router
+│   ├── (main)/                   # 라우트 그룹 (도구 페이지)
+│   │   ├── encoding/             # 인코딩/디코딩 (10개)
+│   │   ├── conversion/           # 형식/단위 변환 (9개)
+│   │   ├── text/                 # 텍스트 처리 (14개)
+│   │   ├── security/             # 보안/암호화 (8개)
+│   │   ├── developer/            # 개발자 도구 (5개)
+│   │   ├── integrations/         # 통합 컴포넌트
+│   │   └── settings/             # 설정 (테마 등)
+│   ├── api/diff/route.ts         # 서버 API 엔드포인트
+│   ├── data/                     # 도구 정의 데이터 (카테고리별)
+│   ├── HomePageClient.tsx        # 홈페이지 클라이언트 컴포넌트
+│   ├── layout.tsx                # 루트 레이아웃
+│   ├── page.tsx                  # 홈페이지
+│   └── globals.css               # 전역 스타일
+├── components/                   # 재사용 가능한 컴포넌트
+│   ├── tools/                    # 도구별 UI 컴포넌트
+│   └── ui/                       # shadcn/ui 컴포넌트
+├── hooks/                        # 커스텀 React 훅
+├── lib/                          # 유틸리티
+│   ├── tools/                    # 도구 순수 로직 (encode/hash/crypto/color/...)
+│   ├── utils/routing.ts          # 카테고리 ↔ 경로 매핑
+│   └── ...
+├── __tests__/                    # Jest 테스트
+├── docs/                         # 문서 (도구 추가 체크리스트)
+├── scripts/validate-routing.js   # 라우팅 매핑 검증 스크립트
+└── package.json                  # 프로젝트 설정
 ```
+
+### 🧰 제공 도구 목록 (총 47개)
+
+| 카테고리 | 개수 | 도구 |
+| --- | --- | --- |
+| 인코딩 | 10 | base64, base32, hex, url, html, unicode, binary, morse-code, caesar-cipher, punycode |
+| 변환 | 9 | number, color, unit, coordinate, currency, timestamp, image, qr-code, uuid |
+| 텍스트 | 15 | json-formatter, xml-formatter, yaml-json, csv-json, sql-formatter, code-formatter, markdown-editor, markdown-table, diff-checker, regex-tester, text-analyzer, text-encryptor, line-break, lorem-ipsum, case-converter |
+| 보안 | 8 | aes-encryptor, hash-tool, jwt-decoder, totp-generator, password-generator, rsa-key-generator, public-key-extractor, certificate-analyzer |
+| 개발자 | 5 | api-tester, cron-generator, file-hash-calculator, network-tools, random-data-generator |
+
+> 도구 목록은 `GET /api/tools` 로도 조회할 수 있습니다. 자세한 내용은 [docs/API.md](docs/API.md).
 
 ## 🛠 기술 스택
 
@@ -171,14 +186,47 @@ const { input, output, handleEncode } = useEncoding({
 
 ## 🔮 향후 계획
 
--   [x] PWA(Progressive Web App) 지원
--   [ ] 다크 모드 지원
--   [ ] 국제화(i18n) 지원
--   [ ] API 엔드포인트 추가
--   [ ] 더 많은 인코딩 도구 추가
--   [ ] 단위 테스트 및 E2E 테스트 추가
+-   [x] 다크 모드 지원 (`next-themes`, 설정 페이지에서 전환)
+-   [x] 단위 테스트 추가 (Jest + Testing Library)
+-   [x] API 엔드포인트 확장 (`/api/diff`, `/api/tools`)
+-   [ ] PWA 지원 — **현재 미동작**. `next-pwa` 가 `next.config.ts` 에 연결되어 있지 않음 ([docs/PWA-검토.md](docs/PWA-검토.md))
+-   [ ] 국제화(i18n) 지원 — 설계 완료, 구현 미착수 ([docs/i18n-설계.md](docs/i18n-설계.md))
+-   [ ] 더 많은 도구 추가
+-   [ ] E2E 테스트 추가 (Playwright 등)
+
+## 📚 문서
+
+-   [API 엔드포인트](docs/API.md)
+-   [새로운 도구 추가 체크리스트](docs/새로운-도구-추가-체크리스트.md)
+-   [i18n 설계](docs/i18n-설계.md)
+-   [PWA 라이브러리 검토](docs/PWA-검토.md)
+
+## ✅ 검증 명령어
+
+```bash
+npm run type-check        # TypeScript 타입 검사
+npm run lint              # ESLint
+npm run validate-routing  # 도구 데이터 ↔ 라우트 경로 매핑 검증
+npm test                  # Jest 단위 테스트
+npm run test:coverage     # 커버리지 포함
+npm run build             # 프로덕션 빌드
+npm run validate-all      # type-check + lint + validate-routing 일괄
+```
+
+CI에서는 위 항목이 모두 통과해야 `main` 병합이 가능합니다 (`.github/workflows/ci.yml`).
 
 ## 📢 최근 업데이트
+
+### 🔧 저장소 정비 · CI 구축 · 도구 추가 (2026년 9월)
+
+-   **CI 파이프라인 도입**: PR/`main` push 시 type-check · lint · 라우팅 검증 · 테스트 · 빌드를 자동 수행 (`.github/workflows/ci.yml`). Vercel 배포는 CI 성공 이후에만 실행
+-   **의존성 자동 갱신**: Dependabot 주간 스캔 (`.github/dependabot.yml`)
+-   **리포 위생**: 재생성 가능한 산출물(`repomix-output.xml`, `.vooster/`, `public/sw.js`, `public/workbox-*.js`) 추적 해제 및 `.gitignore` 정리
+-   **문서 정합화**: README 구조도·도구 목록·로드맵을 실제 코드 기준으로 갱신, `LICENSE`(MIT) 추가, `docs/API.md` 신규
+-   **SEO 기반 추가**: `robots.txt` · `sitemap.xml` · 사이트 메타데이터(OG/Twitter) 적용
+-   **테스트 보강**: `lib/tools` 순수 로직 단위 테스트 8종 추가
+-   **버그 수정**: `text-encryptor` 도구의 `page.tsx` 누락(404) 수정, `validate-routing` 스크립트가 매핑을 중복 정의해 실제 매핑과 어긋나던 문제 수정
+-   **🆕 새 도구**: **텍스트 케이스 변환기** (`/text/case-converter`) — camelCase·snake_case·kebab-case 등 9가지 표기법 변환
 
 ### 🆕 새로운 도구 추가: Lorem Ipsum 생성기 (2024년 12월)
 

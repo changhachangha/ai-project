@@ -39,3 +39,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tooling artifacts (재생성 가능한 산출물)
+repomix-output.xml
+.vooster/
+repomix.config.json
+
+# next-pwa 생성 산출물 (빌드 시 재생성됨)
+public/sw.js
+public/workbox-*.js
+public/fallback-*.js
+
+# test / coverage reports
+coverage/
+junit.xml
+
+# editors / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db
