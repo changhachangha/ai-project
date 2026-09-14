@@ -43,7 +43,9 @@ export default function FeaturedIntegrations({ integrations, onSelect }: Feature
                 className='flex space-x-4 overflow-x-auto pb-4 scrollbar-hide'
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {integrations.slice(0, 10).map((integration) => (
+                {/* 노출 개수는 호출부가 결정한다. 여기서 또 자르면 이중으로 잘려
+                    추천 결과가 일부만 보이는 문제가 생긴다. */}
+                {integrations.map((integration) => (
                     <div
                         key={integration.id}
                         className='flex-shrink-0 w-[250px] bg-card rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-all duration-300 border'

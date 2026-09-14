@@ -16,6 +16,8 @@ const MotionH1 = dynamic(() => import('framer-motion').then((mod) => mod.motion.
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
 import { getPathForCategory } from '@/lib/utils/routing';
+import { selectFeatured } from '@/lib/recommend/rules';
+import { DEFAULT_FEATURED_LIMIT } from '@/lib/recommend/weights';
 
 const ITEMS_PER_PAGE = 30;
 
@@ -79,6 +81,14 @@ export default function HomePageClient() {
         return allTools.filter((integration) => favorites.includes(integration.id));
     }, [favorites]);
 
+    // 홈 추천 영역.
+    // 즐겨찾기를 개인화 신호로 쓰고, 없으면 카테고리 라운드로빈으로 채운다.
+    // (기존에는 allTools.slice(0, 10) 이라 인코딩 도구 10개만 노출됐다)
+    const featuredTools = useMemo(
+        () => selectFeatured(allTools, DEFAULT_FEATURED_LIMIT, favorites).map((item) => item.tool),
+        [favorites]
+    );
+
     const totalPages = Math.ceil(sortedAndFilteredTools.length / ITEMS_PER_PAGE);
     const paginatedIntegrations = sortedAndFilteredTools.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -110,7 +120,10 @@ export default function HomePageClient() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2, duration: 0.5 }}
                     >
-                        <FeaturedIntegrations integrations={allTools.slice(0, 10)} onSelect={handleSelectIntegration} />
+                        <FeaturedIntegrations
+                            integrations={featuredTools}
+                            onSelect={handleSelectIntegration}
+                        />
                     </MotionDiv>
 
                     <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>

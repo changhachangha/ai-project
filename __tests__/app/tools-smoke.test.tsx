@@ -18,6 +18,8 @@ import { textTools } from '@/app/data/text-tools';
 import { securityTools } from '@/app/data/security-tools';
 import { developerTools } from '@/app/data/developer-tools';
 import { getPathForCategory } from '@/lib/utils/routing';
+import { allTools } from '@/app/data/integrations';
+import { recommendByRules } from '@/lib/recommend/rules';
 
 // prettier 는 ESM 전용 동적 import 를 쓰는 CJS 번들이라 jsdom 테스트 워커를 죽인다
 // (ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG). 이 스모크 테스트는 "렌더가 터지지 않는지"만
@@ -128,5 +130,21 @@ describe.each(TOOL_CASES)('도구 라우트: %s (%s/%s)', (id, categoryPath, too
         expect(container!).toBeTruthy();
         // 렌더 결과가 완전히 비어 있으면(빈 div 도 없으면) 실패로 본다.
         expect(container!.innerHTML.length).toBeGreaterThan(0);
+    });
+
+    it('layout.tsx 가 자신의 id 로 관련 도구를 연결한다', () => {
+        const source = fs.readFileSync(path.join(toolDir, 'layout.tsx'), 'utf8');
+
+        // id 를 잘못 넘기면 모든 페이지가 같은 도구를 추천하게 되므로 여기서 고정한다.
+        expect(source).toContain('RelatedTools');
+        expect(source).toContain(`toolId='${id}'`);
+    });
+
+    it('관련 도구 추천이 자기 자신을 제외하고 1개 이상 나온다', () => {
+        const recommendations = recommendByRules(id, allTools, 4);
+
+        expect(recommendations.length).toBeGreaterThan(0);
+        expect(recommendations.some((item) => item.tool.id === id)).toBe(false);
+        expect(recommendations.every((item) => item.reasons.length > 0)).toBe(true);
     });
 });
