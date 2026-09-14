@@ -9,8 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { generateHash, generateSampleText } from '@/lib/tools/hash';
 import { Copy, Hash, Download, CheckCircle, XCircle, FileText } from 'lucide-react';
+
+// crypto-js(약 30kB)는 이 도구에서만 쓰이므로 초기 번들에서 제외하고
+// 해시를 실제로 계산하는 시점에 동적 import 한다.
+const loadHash = () => import('@/lib/tools/hash');
 
 const HashTool: React.FC = () => {
     const [inputText, setInputText] = useState<string>('');
@@ -21,7 +24,14 @@ const HashTool: React.FC = () => {
 
     // 실시간 해시 생성
     useEffect(() => {
-        if (inputText.trim()) {
+        let cancelled = false;
+
+        const run = async () => {
+            if (!inputText.trim()) {
+                setResult(null);
+                return;
+            }
+
             const input: HashToolInput = {
                 text: inputText,
                 algorithm,
@@ -33,9 +43,11 @@ const HashTool: React.FC = () => {
             };
 
             try {
-                const output = generateHash(input, options);
-                setResult(output);
+                const { generateHash } = await loadHash();
+                if (cancelled) return;
+                setResult(generateHash(input, options));
             } catch (error) {
+                if (cancelled) return;
                 setResult({
                     hash: '',
                     algorithm: algorithm.toUpperCase(),
@@ -44,12 +56,16 @@ const HashTool: React.FC = () => {
                     errorMessage: error instanceof Error ? error.message : '해시 생성 중 오류가 발생했습니다.',
                 });
             }
-        } else {
-            setResult(null);
-        }
+        };
+
+        void run();
+
+        return () => {
+            cancelled = true;
+        };
     }, [inputText, algorithm, outputFormat, compareHash]);
 
-    const handleVerifyHash = () => {
+    const handleVerifyHash = async () => {
         if (!compareHash.trim()) {
             return;
         }
@@ -64,13 +80,13 @@ const HashTool: React.FC = () => {
             compareHash: compareHash.trim(),
         };
 
-        const output = generateHash(input, options);
-        setResult(output);
+        const { generateHash } = await loadHash();
+        setResult(generateHash(input, options));
     };
 
-    const handleGenerateSample = () => {
-        const sampleText = generateSampleText();
-        setInputText(sampleText);
+    const handleGenerateSample = async () => {
+        const { generateSampleText } = await loadHash();
+        setInputText(generateSampleText());
     };
 
     const handleCopyToClipboard = async (text: string) => {

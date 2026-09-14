@@ -10,7 +10,7 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
-        "analyze": "ANALYZE=true npm run build",
+        "analyze": "node scripts/analyze.js",
         "type-check": "tsc --noEmit",
         "validate-routing": "node scripts/validate-routing.js",
         "validate-all": "npm run type-check && npm run lint && npm run validate-routing"

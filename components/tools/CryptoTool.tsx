@@ -9,8 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { extractPublicKey, generateSampleRSAKey } from '@/lib/tools/crypto';
 import { Copy, Key, Download, Server, AlertTriangle, Terminal } from 'lucide-react';
+
+// node-forge(약 80kB)는 이 도구에서만 쓰이므로 초기 번들에서 제외하고
+// 실제로 키를 처리하는 시점에 동적 import 한다.
+const loadCrypto = () => import('@/lib/tools/crypto');
 
 const CryptoTool: React.FC = () => {
     const [privateKeyInput, setPrivateKeyInput] = useState<string>('');
@@ -40,6 +43,7 @@ const CryptoTool: React.FC = () => {
         };
 
         try {
+            const { extractPublicKey } = await loadCrypto();
             const output = extractPublicKey(input, options);
             setResult(output);
         } catch (error) {
@@ -77,7 +81,8 @@ const CryptoTool: React.FC = () => {
         return command;
     };
 
-    const handleGenerateSample = () => {
+    const handleGenerateSample = async () => {
+        const { generateSampleRSAKey } = await loadCrypto();
         const sampleKey = generateSampleRSAKey();
         if (sampleKey) {
             setPrivateKeyInput(sampleKey);
