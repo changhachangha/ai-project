@@ -26,8 +26,8 @@ const MarkdownTableGeneratorClient = memo(() => {
         ],
         alignments: ['left', 'center', 'right'],
     });
-    const [markdownOutput, setMarkdownOutput] = useState('');
 
+    // 순수 함수로 유지한다. (렌더 중 setState 를 호출하면 무한 재렌더가 발생한다)
     const generateMarkdown = useCallback(() => {
         const { headers, rows, alignments } = tableData;
 
@@ -65,7 +65,6 @@ const MarkdownTableGeneratorClient = memo(() => {
         });
 
         const markdown = [headerRow, alignmentRow, ...dataRows].join('\n');
-        setMarkdownOutput(markdown);
         return markdown;
     }, [tableData]);
 
@@ -151,10 +150,8 @@ const MarkdownTableGeneratorClient = memo(() => {
         });
     }, []);
 
-    // 실시간 마크다운 생성
-    useState(() => {
-        generateMarkdown();
-    });
+    // 렌더 중 파생값으로 계산한다. (별도 state 로 두면 동기화 버그가 생긴다)
+    const markdownOutput = generateMarkdown();
 
     return (
         <div className='container mx-auto p-4 max-w-6xl'>
@@ -284,7 +281,7 @@ const MarkdownTableGeneratorClient = memo(() => {
                     <CardContent>
                         <div className='space-y-4'>
                             <Textarea
-                                value={generateMarkdown()}
+                                value={markdownOutput}
                                 readOnly
                                 placeholder='생성된 마크다운 테이블이 여기에 표시됩니다...'
                                 className='min-h-[400px] font-mono text-sm'
