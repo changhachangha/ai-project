@@ -191,7 +191,11 @@ describe('Optimized Components', () => {
 });
 
 // 성능 벤치마크 테스트
-describe('Performance Benchmarks', () => {
+// 시간(ms) 기반 벤치마크는 CI 러너의 부하에 따라 결과가 크게 흔들려 신뢰할 수 없다.
+// 기본적으로 건너뛰고, 로컬 프로파일링 시에만 실행한다: `RUN_PERF_TESTS=1 npm test`
+const describePerf = process.env.RUN_PERF_TESTS ? describe : describe.skip;
+
+describePerf('Performance Benchmarks', () => {
     it('should render large list efficiently', async () => {
         const largeToolList = Array.from({ length: 100 }, (_, i) => ({
             id: `tool-${i}`,

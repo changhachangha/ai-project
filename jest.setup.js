@@ -1,4 +1,13 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+
+// jsdom 환경에는 TextEncoder/TextDecoder 가 없으므로 Node 구현으로 폴리필한다.
+if (typeof global.TextEncoder === 'undefined') {
+    global.TextEncoder = TextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+    global.TextDecoder = TextDecoder;
+}
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
