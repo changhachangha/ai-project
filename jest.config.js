@@ -40,6 +40,12 @@ const customJestConfig = {
             functions: 95,
             lines: 85,
         },
+        './lib/recommend/': {
+            statements: 80,
+            branches: 60,
+            functions: 90,
+            lines: 80,
+        },
     },
 };
 
