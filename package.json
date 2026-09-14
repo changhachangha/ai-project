@@ -13,7 +13,8 @@
         "analyze": "node scripts/analyze.js",
         "type-check": "tsc --noEmit",
         "validate-routing": "node scripts/validate-routing.js",
-        "validate-all": "npm run type-check && npm run lint && npm run validate-routing"
+        "validate-recommend": "node scripts/validate-recommend.js",
+        "validate-all": "npm run type-check && npm run lint && npm run validate-routing && npm run validate-recommend"
     },
     "dependencies": {
         "@emotion/is-prop-valid": "^1.3.1",

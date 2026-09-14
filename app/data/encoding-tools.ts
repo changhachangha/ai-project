@@ -9,6 +9,8 @@ export const encodingTools: Integration[] = [
         category: '베이스 인코딩',
         icon: FileText,
         color: '#4ECDC4',
+        tags: ['인코딩', '문자열', '바이너리', '텍스트'],
+        related: ['base32', 'hex', 'url'],
     },
     {
         id: 'base32',
@@ -17,6 +19,8 @@ export const encodingTools: Integration[] = [
         category: '베이스 인코딩',
         icon: FileText,
         color: '#45B7D1',
+        tags: ['인코딩', '문자열', '바이너리', '텍스트'],
+        related: ['base64', 'hex', 'binary'],
     },
     {
         id: 'hex',
@@ -25,6 +29,8 @@ export const encodingTools: Integration[] = [
         category: '베이스 인코딩',
         icon: Hash,
         color: '#96CEB4',
+        tags: ['인코딩', '16진수', '바이너리', '텍스트'],
+        related: ['base64', 'base32', 'binary'],
     },
     {
         id: 'url',
@@ -33,6 +39,8 @@ export const encodingTools: Integration[] = [
         category: 'URL/텍스트 처리',
         icon: Link,
         color: '#FF6B6B',
+        tags: ['인코딩', 'URL', '웹', '이스케이프'],
+        related: ['html', 'punycode', 'base64'],
     },
     {
         id: 'html',
@@ -41,6 +49,8 @@ export const encodingTools: Integration[] = [
         category: 'URL/텍스트 처리',
         icon: FileText,
         color: '#FFB6C1',
+        tags: ['인코딩', 'HTML', '웹', '이스케이프'],
+        related: ['url', 'xml-formatter', 'base64'],
     },
     {
         id: 'unicode',
@@ -49,6 +59,8 @@ export const encodingTools: Integration[] = [
         category: 'URL/텍스트 처리',
         icon: Type,
         color: '#3F51B5',
+        tags: ['인코딩', '유니코드', '문자', '코드포인트'],
+        related: ['punycode', 'binary', 'hex'],
     },
     {
         id: 'binary',
@@ -57,6 +69,8 @@ export const encodingTools: Integration[] = [
         category: '진수 변환',
         icon: Binary,
         color: '#607D8B',
+        tags: ['진수', '변환', '숫자', '2진수', '16진수'],
+        related: ['hex', 'number-converter', 'unicode'],
     },
     {
         id: 'morse-code',
@@ -65,6 +79,8 @@ export const encodingTools: Integration[] = [
         category: '특수 인코딩',
         icon: Radio,
         color: '#795548',
+        tags: ['인코딩', '모스', '특수', '암호'],
+        related: ['caesar-cipher', 'binary', 'unicode'],
     },
     {
         id: 'punycode',
@@ -73,6 +89,8 @@ export const encodingTools: Integration[] = [
         category: 'URL/텍스트 처리',
         icon: Globe,
         color: '#FF9800',
+        tags: ['인코딩', '도메인', '국제화', 'URL'],
+        related: ['url', 'unicode', 'base64'],
     },
     {
         id: 'caesar-cipher',
@@ -81,5 +99,7 @@ export const encodingTools: Integration[] = [
         category: '특수 인코딩',
         icon: RotateCcw,
         color: '#673AB7',
+        tags: ['암호', '치환', 'ROT13', '특수'],
+        related: ['morse-code', 'aes-encryptor', 'text-encryptor'],
     },
 ];

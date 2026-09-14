@@ -9,6 +9,8 @@ export const conversionTools: Integration[] = [
         category: '시간/날짜',
         icon: Clock,
         color: '#FF6B6B',
+        tags: ['시간', '날짜', '타임스탬프', '변환'],
+        related: ['cron-generator', 'unit-converter', 'number-converter'],
     },
     {
         id: 'color-converter',
@@ -17,6 +19,8 @@ export const conversionTools: Integration[] = [
         category: '색상',
         icon: Palette,
         color: '#4ECDC4',
+        tags: ['색상', 'HEX', 'RGB', '변환'],
+        related: ['unit-converter', 'number-converter', 'image-converter'],
     },
     {
         id: 'uuid-generator',
@@ -25,6 +29,8 @@ export const conversionTools: Integration[] = [
         category: '유틸리티',
         icon: Zap,
         color: '#45B7D1',
+        tags: ['UUID', '식별자', '랜덤', '생성'],
+        related: ['random-data-generator', 'password-generator', 'hash-tool'],
     },
     {
         id: 'qr-code-generator',
@@ -33,6 +39,8 @@ export const conversionTools: Integration[] = [
         category: '유틸리티',
         icon: QrCode,
         color: '#96CEB4',
+        tags: ['QR', '코드', '이미지', '생성'],
+        related: ['totp-generator', 'image-converter', 'uuid-generator'],
     },
     {
         id: 'image-converter',
@@ -41,6 +49,8 @@ export const conversionTools: Integration[] = [
         category: '유틸리티',
         icon: Image,
         color: '#F39C12',
+        tags: ['이미지', '파일', '변환', '포맷'],
+        related: ['qr-code-generator', 'color-converter', 'file-hash-calculator'],
     },
     {
         id: 'unit-converter',
@@ -49,6 +59,8 @@ export const conversionTools: Integration[] = [
         category: '유틸리티',
         icon: Ruler,
         color: '#E67E22',
+        tags: ['단위', '변환', '숫자', '계산'],
+        related: ['number-converter', 'currency-converter', 'timestamp-converter'],
     },
     {
         id: 'currency-converter',
@@ -57,6 +69,8 @@ export const conversionTools: Integration[] = [
         category: '유틸리티',
         icon: DollarSign,
         color: '#27AE60',
+        tags: ['통화', '환율', '금액', '변환'],
+        related: ['unit-converter', 'number-converter'],
     },
     {
         id: 'coordinate-converter',
@@ -65,6 +79,8 @@ export const conversionTools: Integration[] = [
         category: '유틸리티',
         icon: MapPin,
         color: '#3498DB',
+        tags: ['좌표', '지도', '위도', '경도'],
+        related: ['unit-converter', 'number-converter'],
     },
     {
         id: 'number-converter',
@@ -73,5 +89,7 @@ export const conversionTools: Integration[] = [
         category: '유틸리티',
         icon: Hash,
         color: '#9B59B6',
+        tags: ['숫자', '진수', '변환', '계산'],
+        related: ['binary', 'unit-converter', 'hex'],
     },
 ];

@@ -10,6 +10,8 @@ export const developerTools: Integration[] = [
         category: '개발자 도구',
         icon: Network,
         color: '#34495E',
+        tags: ['네트워크', 'IP', '서브넷', 'DNS'],
+        related: ['api-tester', 'certificate-analyzer', 'cron-generator'],
     },
     {
         id: 'file-hash-calculator',
@@ -18,6 +20,8 @@ export const developerTools: Integration[] = [
         category: '개발자 도구',
         icon: FileCheck,
         color: '#E74C3C',
+        tags: ['해시', '파일', '무결성', '체크섬'],
+        related: ['hash-tool', 'image-converter', 'certificate-analyzer'],
     },
     {
         id: 'random-data-generator',
@@ -26,6 +30,8 @@ export const developerTools: Integration[] = [
         category: '개발자 도구',
         icon: Dices,
         color: '#3498DB',
+        tags: ['랜덤', '더미', '데이터', '생성'],
+        related: ['uuid-generator', 'lorem-ipsum', 'password-generator'],
     },
     {
         id: 'api-tester',
@@ -34,6 +40,8 @@ export const developerTools: Integration[] = [
         category: '개발자 도구',
         icon: Send,
         color: '#27AE60',
+        tags: ['API', 'HTTP', '요청', '테스트'],
+        related: ['network-tools', 'json-formatter', 'cron-generator'],
     },
     {
         id: 'cron-generator',
@@ -42,5 +50,7 @@ export const developerTools: Integration[] = [
         category: '개발자 도구',
         icon: Calendar,
         color: '#F39C12',
+        tags: ['Cron', '스케줄', '표현식', '시간'],
+        related: ['timestamp-converter', 'api-tester', 'network-tools'],
     },
 ];

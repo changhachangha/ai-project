@@ -26,6 +26,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: FileJson,
         color: '#FF6B6B',
+        tags: ['JSON', '포매팅', '검증', '데이터'],
+        related: ['yaml-json-converter', 'xml-formatter', 'csv-json-converter'],
     },
     {
         id: 'diff-checker',
@@ -34,6 +36,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: GitCompare,
         color: '#45B7D1',
+        tags: ['비교', '차이', '텍스트', '버전'],
+        related: ['text-analyzer', 'line-break-converter', 'code-formatter'],
     },
     {
         id: 'regex-tester',
@@ -42,6 +46,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: Regex,
         color: '#96CEB4',
+        tags: ['정규식', '패턴', '검증', '텍스트'],
+        related: ['text-analyzer', 'code-formatter', 'diff-checker'],
     },
     {
         id: 'markdown-editor',
@@ -50,6 +56,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: FileText,
         color: '#DDA0DD',
+        tags: ['마크다운', '에디터', '미리보기', '문서'],
+        related: ['markdown-table-generator', 'html', 'text-analyzer'],
     },
     {
         id: 'csv-json-converter',
@@ -58,6 +66,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: Table,
         color: '#FFB6C1',
+        tags: ['CSV', 'JSON', '데이터', '변환'],
+        related: ['json-formatter', 'yaml-json-converter', 'markdown-table-generator'],
     },
     {
         id: 'sql-formatter',
@@ -66,6 +76,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: Database,
         color: '#4ECDC4',
+        tags: ['SQL', '쿼리', '포매팅', '데이터베이스'],
+        related: ['code-formatter', 'json-formatter', 'xml-formatter'],
     },
     {
         id: 'lorem-ipsum',
@@ -74,6 +86,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: FileType,
         color: '#F39C12',
+        tags: ['더미', '텍스트', '생성', '샘플'],
+        related: ['random-data-generator', 'text-analyzer', 'case-converter'],
     },
     {
         id: 'yaml-json-converter',
@@ -82,6 +96,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: Code,
         color: '#9B59B6',
+        tags: ['YAML', 'JSON', '데이터', '변환'],
+        related: ['json-formatter', 'csv-json-converter', 'xml-formatter'],
     },
     {
         id: 'code-formatter',
@@ -90,6 +106,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: FileCode,
         color: '#E67E22',
+        tags: ['코드', '포매팅', '들여쓰기', '언어'],
+        related: ['sql-formatter', 'json-formatter', 'xml-formatter'],
     },
     {
         id: 'xml-formatter',
@@ -98,6 +116,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: FileX,
         color: '#E74C3C',
+        tags: ['XML', '포매팅', '검증', '마크업'],
+        related: ['json-formatter', 'yaml-json-converter', 'html'],
     },
     {
         id: 'text-analyzer',
@@ -106,6 +126,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: BarChart3,
         color: '#3498DB',
+        tags: ['텍스트', '통계', '분석', '글자수'],
+        related: ['diff-checker', 'case-converter', 'lorem-ipsum'],
     },
     {
         id: 'markdown-table-generator',
@@ -114,6 +136,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: Grid3X3,
         color: '#2ECC71',
+        tags: ['마크다운', '테이블', '표', '생성'],
+        related: ['markdown-editor', 'csv-json-converter', 'lorem-ipsum'],
     },
     {
         id: 'text-encryptor',
@@ -122,6 +146,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: Lock,
         color: '#8E44AD',
+        tags: ['암호화', '텍스트', '비밀번호', '복호화'],
+        related: ['aes-encryptor', 'caesar-cipher', 'hash-tool'],
     },
     {
         id: 'line-break-converter',
@@ -130,6 +156,8 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: ArrowUpDown,
         color: '#16A085',
+        tags: ['줄바꿈', '개행', '포맷', '텍스트'],
+        related: ['diff-checker', 'text-analyzer', 'code-formatter'],
     },
     {
         id: 'case-converter',
@@ -138,5 +166,7 @@ export const textTools: Integration[] = [
         category: '텍스트 처리',
         icon: CaseSensitive,
         color: '#E67E22',
+        tags: ['케이스', 'camelCase', 'snake_case', '변환'],
+        related: ['text-analyzer', 'code-formatter', 'regex-tester'],
     },
 ];

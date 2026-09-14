@@ -10,6 +10,8 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Key,
         color: '#34495E',
+        tags: ['RSA', '키', '암호화', '비대칭'],
+        related: ['public-key-extractor', 'aes-encryptor', 'certificate-analyzer'],
     },
     {
         id: 'public-key-extractor',
@@ -18,6 +20,8 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: KeyRound,
         color: '#2C3E50',
+        tags: ['공개키', 'RSA', 'PEM', '추출'],
+        related: ['rsa-key-generator', 'certificate-analyzer', 'aes-encryptor'],
     },
     {
         id: 'hash-tool',
@@ -26,6 +30,8 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Hash,
         color: '#8E44AD',
+        tags: ['해시', 'SHA', 'MD5', '무결성'],
+        related: ['file-hash-calculator', 'password-generator', 'text-encryptor'],
     },
     {
         id: 'jwt-decoder',
@@ -34,6 +40,8 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Shield,
         color: '#E74C3C',
+        tags: ['JWT', '토큰', '인증', '디코딩'],
+        related: ['base64', 'hash-tool', 'aes-encryptor'],
     },
     {
         id: 'password-generator',
@@ -42,6 +50,8 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Lock,
         color: '#27AE60',
+        tags: ['비밀번호', '랜덤', '보안', '생성'],
+        related: ['uuid-generator', 'random-data-generator', 'hash-tool'],
     },
     {
         id: 'aes-encryptor',
@@ -50,6 +60,8 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: FileKey,
         color: '#D35400',
+        tags: ['AES', '대칭키', '암호화', '복호화'],
+        related: ['text-encryptor', 'rsa-key-generator', 'hash-tool'],
     },
     {
         id: 'certificate-analyzer',
@@ -58,6 +70,8 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Award,
         color: '#7F8C8D',
+        tags: ['인증서', 'SSL', 'X509', '만료'],
+        related: ['public-key-extractor', 'rsa-key-generator', 'network-tools'],
     },
     {
         id: 'totp-generator',
@@ -66,5 +80,7 @@ export const securityTools: Integration[] = [
         category: '보안/암호화',
         icon: Smartphone,
         color: '#9B59B6',
+        tags: ['2FA', 'OTP', 'QR', '인증'],
+        related: ['qr-code-generator', 'password-generator', 'jwt-decoder'],
     },
 ];
