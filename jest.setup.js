@@ -44,8 +44,11 @@ if (typeof window !== 'undefined') {
     });
 
     // Mock navigator.clipboard
+    // configurable: true 가 없으면 userEvent.setup() 이 clipboard 를 스텁하려다
+    // "Cannot redefine property: clipboard" 로 실패한다.
     if (!navigator.clipboard) {
         Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
             value: {
                 writeText: jest.fn(() => Promise.resolve()),
                 readText: jest.fn(() => Promise.resolve('')),
@@ -55,6 +58,7 @@ if (typeof window !== 'undefined') {
 
     // Mock crypto.subtle
     Object.defineProperty(window, 'crypto', {
+        configurable: true,
         value: {
             subtle: {
                 generateKey: jest.fn(),
