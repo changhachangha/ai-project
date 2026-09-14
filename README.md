@@ -99,7 +99,9 @@ ai-project/
 │   └── ...
 ├── __tests__/                    # Jest 테스트
 ├── docs/                         # 문서 (도구 추가 체크리스트)
-├── scripts/validate-routing.js   # 라우팅 매핑 검증 스크립트
+├── scripts/
+│   ├── validate-routing.js       # 라우팅 매핑 검증 스크립트
+│   └── analyze.js                # 번들 분석 빌드 실행기
 └── package.json                  # 프로젝트 설정
 ```
 
@@ -210,6 +212,7 @@ npm run validate-routing  # 도구 데이터 ↔ 라우트 경로 매핑 검증
 npm test                  # Jest 단위 테스트
 npm run test:coverage     # 커버리지 포함
 npm run build             # 프로덕션 빌드
+npm run analyze           # 번들 분석 빌드 → .next/analyze/*.html 리포트 생성
 npm run validate-all      # type-check + lint + validate-routing 일괄
 ```
 
@@ -226,6 +229,7 @@ CI에서는 위 항목이 모두 통과해야 `main` 병합이 가능합니다 (
 -   **SEO 기반 추가**: `robots.txt` · `sitemap.xml` · 사이트 메타데이터(OG/Twitter) 적용
 -   **테스트 보강**: `lib/tools` 순수 로직 단위 테스트 8종 추가
 -   **버그 수정**: `text-encryptor` 도구의 `page.tsx` 누락(404) 수정, `validate-routing` 스크립트가 매핑을 중복 정의해 실제 매핑과 어긋나던 문제 수정
+-   **번들 최적화**: `node-forge`·`crypto-js`를 동적 로딩으로 전환 — `/security/public-key-extractor` First Load JS 223kB → 148kB, `/security/hash-tool` 171kB → 147kB. `npm run analyze`로 번들 리포트 생성 가능
 -   **🆕 새 도구**: **텍스트 케이스 변환기** (`/text/case-converter`) — camelCase·snake_case·kebab-case 등 9가지 표기법 변환
 
 ### 🆕 새로운 도구 추가: Lorem Ipsum 생성기 (2024년 12월)
