@@ -49,49 +49,6 @@ const SettingsPage: React.FC = () => {
                     </div>
                 </CardContent>
             </Card>
-
-            <Card className='bg-card border-border'>
-                <CardHeader>
-                    <CardTitle className='text-card-foreground'>기타 설정</CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                    <div className='flex items-center space-x-4'>
-                        <Label className='text-card-foreground'>폰트 크기:</Label>
-                        <Select defaultValue='md'>
-                            <SelectTrigger className='w-[180px] bg-background border-border text-foreground'>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className='bg-popover border-border'>
-                                <SelectItem value='sm' className='text-popover-foreground'>
-                                    작게
-                                </SelectItem>
-                                <SelectItem value='md' className='text-popover-foreground'>
-                                    보통
-                                </SelectItem>
-                                <SelectItem value='lg' className='text-popover-foreground'>
-                                    크게
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className='flex items-center space-x-4'>
-                        <Label className='text-card-foreground'>날짜 형식:</Label>
-                        <Select defaultValue='YYYY-MM-DD'>
-                            <SelectTrigger className='w-[180px] bg-background border-border text-foreground'>
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className='bg-popover border-border'>
-                                <SelectItem value='YYYY-MM-DD' className='text-popover-foreground'>
-                                    YYYY-MM-DD
-                                </SelectItem>
-                                <SelectItem value='MM/DD/YYYY' className='text-popover-foreground'>
-                                    MM/DD/YYYY
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </CardContent>
-            </Card>
         </div>
     );
 };
