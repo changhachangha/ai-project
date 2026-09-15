@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { allTools, groupedTools } from '@/app/data/integrations';
-import { getPathForCategory } from '@/lib/utils/routing';
+import { toolPath } from '@/lib/utils/paths';
 
 // 정적 데이터만 반환하므로 빌드 시점에 정적화한다.
 export const dynamic = 'force-static';
@@ -16,7 +16,7 @@ export function GET() {
         total: allTools.length,
         categories: groupedTools.map((group) => ({
             category: group.category,
-            path: getPathForCategory(group.category),
+            path: group.tools[0].section,
             count: group.tools.length,
         })),
         tools: allTools.map((tool) => ({
@@ -24,7 +24,7 @@ export function GET() {
             name: tool.name,
             description: tool.description,
             category: tool.category,
-            path: `/${getPathForCategory(tool.category)}/${tool.id}`,
+            path: toolPath(tool),
         })),
     });
 }

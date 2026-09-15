@@ -1,7 +1,5 @@
 import type { Integration } from '@/app/data/types';
-import type { Recommendation } from './types';
 import { buildDocumentText, tokenize } from './tokenize';
-import { DEFAULT_RELATED_LIMIT } from './weights';
 
 /**
  * TF-IDF 인덱스.
@@ -91,13 +89,32 @@ export function cosineSimilarity(
 }
 
 /**
+ * 인덱스 캐시.
+ *
+ * 카탈로그(allTools)는 모듈 상수라 참조가 바뀌지 않는다. 도구 페이지를 옮길 때마다
+ * 47개 문서를 다시 토큰화하는 낭비를 막기 위해 배열 참조를 키로 재사용한다.
+ * (WeakMap 이라 배열이 회수되면 캐시도 함께 사라진다)
+ */
+const indexCache = new WeakMap<Integration[], ContentIndex>();
+
+/** 인덱스를 가져온다. 없으면 만들어 캐시한다. */
+export function getIndex(tools: Integration[]): ContentIndex {
+    const cached = indexCache.get(tools);
+    if (cached) return cached;
+
+    const built = buildIndex(tools);
+    indexCache.set(tools, built);
+    return built;
+}
+
+/**
  * 특정 도구와 나머지 도구의 유사도 맵.
  * 자기 자신은 결과에서 제외한다.
  */
 export function similarityMap(
     toolId: string,
     tools: Integration[],
-    index: ContentIndex = buildIndex(tools)
+    index: ContentIndex = getIndex(tools)
 ): Map<string, number> {
     const result = new Map<string, number>();
     const sourceCounts = index.termCounts.get(toolId);
@@ -120,30 +137,4 @@ export function similarityMap(
     }
 
     return result;
-}
-
-/**
- * 콘텐츠 유사도만으로 추천 목록을 만든다.
- * 규칙이 놓치는 카테고리 간 연관(예: JWT 디코더 ↔ Base64)을 잡는 것이 목적이다.
- */
-export function recommendByContent(
-    toolId: string,
-    tools: Integration[],
-    limit: number = DEFAULT_RELATED_LIMIT
-): Recommendation[] {
-    const scores = similarityMap(toolId, tools);
-
-    return [...scores.entries()]
-        .map(([id, score]) => ({ tool: tools.find((item) => item.id === id)!, score }))
-        .filter((item) => item.tool)
-        .sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return a.tool.id.localeCompare(b.tool.id);
-        })
-        .slice(0, limit)
-        .map((item) => ({
-            tool: item.tool,
-            score: item.score,
-            reasons: ['similar-content' as const],
-        }));
 }

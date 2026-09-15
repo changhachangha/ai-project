@@ -1,14 +1,22 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 
 import { allTools } from '@/app/data/integrations';
-import { getPathForCategory } from '@/lib/utils/routing';
-import { recommendByRules } from '@/lib/recommend/rules';
-import { DEFAULT_RELATED_LIMIT } from '@/lib/recommend/weights';
-import { REASON_LABELS } from '@/lib/recommend/types';
+import { toolPath } from '@/lib/utils/paths';
+import {
+    recommend,
+    recordClick,
+    recordImpressions,
+    readMetrics,
+    getImpressedToolIds,
+    DEFAULT_RELATED_LIMIT,
+    REASON_LABELS,
+} from '@/lib/recommend';
+import { useToolUsage } from '@/hooks/useToolUsage';
+import { useFavorites } from '@/hooks/useFavorites';
 
 type RelatedToolsProps = {
     /** 현재 보고 있는 도구의 id. 이 도구와 연관된 도구를 계산한다. */
@@ -24,11 +32,43 @@ type RelatedToolsProps = {
  *
  * 카탈로그(allTools)는 이미 사이드바 레이아웃이 불러오고 있어
  * 이 컴포넌트가 추가로 만드는 번들 비용은 사실상 없다.
+ *
+ * 점수 계산은 전부 브라우저에서 한다. 도구 47개 규모라 즉시 끝나고,
+ * 서버 왕복이 없어 정적 프리렌더 구조를 그대로 유지한다.
  */
 export default function RelatedTools({ toolId, limit = DEFAULT_RELATED_LIMIT }: RelatedToolsProps) {
     const router = useRouter();
 
-    const recommendations = useMemo(() => recommendByRules(toolId, allTools, limit), [toolId, limit]);
+    // 이 컴포넌트가 47개 도구 페이지에 모두 들어가므로, 여기서 한 번 기록하면
+    // 도구별로 계측 코드를 따로 심지 않아도 전체 방문이 집계된다.
+    // 훅은 조건 없이 호출해야 하므로 아래 조기 반환보다 먼저 둔다.
+    const { usage } = useToolUsage(toolId);
+    const { favorites } = useFavorites();
+
+    // 이전 방문에서 이미 노출된 도구는 감점한다 — 같은 추천이 매번 뜨는 것을 막는다.
+    // 마운트 후에만 읽어 SSR/첫 렌더 불일치를 피한다.
+    const [demoteIds, setDemoteIds] = useState<string[]>([]);
+    useEffect(() => {
+        setDemoteIds(getImpressedToolIds(readMetrics()));
+    }, []);
+
+    // 하이브리드 랭커: related(5.0) > 같은 카테고리(3.0) > 콘텐츠 유사도(4.0)
+    // > 태그 교집합(2.0) > 최근 사용(1.5) > 즐겨찾기(1.0).
+    // usage 를 그대로 넘긴다. 점수 변환은 랭커 안에서 한 번만 한다.
+    const recommendations = useMemo(
+        () => recommend(toolId, allTools, limit, { usage, favorites, demoteIds }),
+        [toolId, limit, usage, favorites, demoteIds]
+    );
+
+    // 노출 계측.
+    // 목록은 usage/favorites 가 준비되면서 한 번 더 바뀌므로, 그대로 두면
+    // 같은 노출을 두 번 센다. 첫 목록만 집계해 중복을 막는다.
+    const counted = useRef(false);
+    useEffect(() => {
+        if (counted.current || recommendations.length === 0) return;
+        counted.current = true;
+        recordImpressions(recommendations.map((item) => item.tool.id));
+    }, [recommendations]);
 
     // 추천이 하나도 없으면 빈 섹션 제목만 남지 않도록 아예 렌더하지 않는다.
     if (recommendations.length === 0) return null;
@@ -44,7 +84,11 @@ export default function RelatedTools({ toolId, limit = DEFAULT_RELATED_LIMIT }: 
                     <button
                         key={tool.id}
                         type='button'
-                        onClick={() => router.push(`/${getPathForCategory(tool.category)}/${tool.id}`)}
+                        onClick={() => {
+                            // 어떤 추천이 실제로 눌리는지 로컬에서만 집계한다.
+                            recordClick(tool.id);
+                            router.push(toolPath(tool));
+                        }}
                         className='flex items-start gap-3 rounded-lg border border-border bg-card p-4 text-left transition-colors hover:bg-accent'
                     >
                         <span

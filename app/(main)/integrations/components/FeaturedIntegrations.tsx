@@ -7,10 +7,16 @@ import type { Integration } from '../../../data/types';
 
 type FeaturedIntegrationsProps = {
     integrations: Integration[];
+    /** 도구 id → 추천 사유 라벨. 없으면 사유를 표시하지 않는다. */
+    reasonById?: Record<string, string>;
     onSelect: (integration: Integration) => void;
 };
 
-export default function FeaturedIntegrations({ integrations, onSelect }: FeaturedIntegrationsProps) {
+export default function FeaturedIntegrations({
+    integrations,
+    reasonById,
+    onSelect,
+}: FeaturedIntegrationsProps) {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const scroll = (direction: 'left' | 'right') => {
@@ -27,7 +33,7 @@ export default function FeaturedIntegrations({ integrations, onSelect }: Feature
 
     return (
         <div className='relative'>
-            <h2 className='text-lg font-semibold mb-4'>Featured Integrations</h2>
+            <h2 className='text-lg font-semibold mb-4'>추천 도구</h2>
 
             <div className='absolute top-0 right-0 flex space-x-2'>
                 <Button variant='outline' size='icon' aria-label='이전 항목으로 스크롤' onClick={() => scroll('left')}>
@@ -63,9 +69,17 @@ export default function FeaturedIntegrations({ integrations, onSelect }: Feature
                             <h3 className='font-medium text-card-foreground'>{integration.name}</h3>
                         </div>
                         <p className='text-xs text-muted-foreground line-clamp-2 mb-3'>{integration.description}</p>
-                        <span className='text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded-full'>
-                            {integration.category}
-                        </span>
+                        <div className='flex items-center gap-2 flex-wrap'>
+                            <span className='text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded-full'>
+                                {integration.category}
+                            </span>
+                            {/* 추천 사유. 개인화 신호가 없어 라운드로빈으로 채운 항목은 사유가 없다. */}
+                            {reasonById?.[integration.id] && (
+                                <span className='text-[11px] text-muted-foreground'>
+                                    {reasonById[integration.id]}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>

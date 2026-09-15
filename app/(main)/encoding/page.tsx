@@ -1,37 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { encodingTools } from '../../data/encoding-tools';
 import type { Integration } from '../../data/types';
 import SimpleCategoryFilter from './components/SimpleCategoryFilter';
 import IntegrationGrid from '../integrations/components/IntegrationGrid';
 import SearchBar from '../integrations/components/SearchBar';
-
-const categories = ['베이스 인코딩', 'URL/텍스트 처리', '진수 변환'];
+import { useToolCatalog } from '@/hooks/useToolCatalog';
+import { toolPath } from '@/lib/utils/paths';
 
 export default function EncodingTools() {
-    const [selectedCategory, setSelectedCategory] = useState<string>('전체');
-    const [searchQuery, setSearchQuery] = useState<string>('');
-    const [favorites, setFavorites] = useState<string[]>([]);
+    const router = useRouter();
 
-    const filteredTools = encodingTools.filter((tool) => {
-        const matchesCategory = selectedCategory === '전체' || tool.category === selectedCategory;
-        const matchesSearch =
-            tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
-
-    const handleSearch = (query: string) => {
-        setSearchQuery(query);
-    };
+    // 카테고리 목록은 훅이 데이터에서 파생한다 — 이전의 하드코딩 목록은
+    // '특수 인코딩' 을 빼먹어 morse-code/caesar-cipher 가 필터에서 안 보였다.
+    const {
+        setQuery,
+        category,
+        setCategory,
+        categories,
+        favorites,
+        toggleFavorite,
+        visibleTools,
+    } = useToolCatalog({ tools: encodingTools, allCategoryLabel: '전체' });
 
     const handleSelectIntegration = (integration: Integration) => {
-        window.location.href = `/encoding/${integration.id}`;
-    };
-
-    const handleToggleFavorite = (id: string) => {
-        setFavorites((prev) => (prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]));
+        router.push(toolPath(integration));
     };
 
     return (
@@ -42,20 +36,20 @@ export default function EncodingTools() {
                 <div className="w-full md:w-64">
                     <SimpleCategoryFilter
                         categories={['전체', ...categories]}
-                        selectedCategory={selectedCategory}
-                        onSelectCategory={setSelectedCategory}
+                        selectedCategory={category}
+                        onSelectCategory={setCategory}
                     />
                 </div>
                 <div className="flex-1">
-                    <SearchBar onSearch={handleSearch} />
+                    <SearchBar onSearch={setQuery} />
                 </div>
             </div>
 
             <IntegrationGrid
-                integrations={filteredTools}
+                integrations={visibleTools}
                 onSelectIntegration={handleSelectIntegration}
                 favorites={favorites}
-                onToggleFavorite={handleToggleFavorite}
+                onToggleFavorite={toggleFavorite}
             />
         </div>
     );

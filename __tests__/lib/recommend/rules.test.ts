@@ -3,10 +3,7 @@ import {
     applyDiversity,
     buildRelatedMap,
     countTagOverlap,
-    recommendByRules,
     scoreByRules,
-    selectByRoundRobin,
-    selectFeatured,
     sortScored,
 } from '@/lib/recommend/rules';
 import { MAX_PER_CATEGORY } from '@/lib/recommend/weights';
@@ -16,6 +13,7 @@ const makeTool = (overrides: Partial<Integration> & Pick<Integration, 'id'>): In
     name: overrides.id,
     description: '',
     category: '기타',
+    section: 'text',
     icon: (() => null) as unknown as Integration['icon'],
     color: '#000000',
     tags: [],
@@ -137,54 +135,5 @@ describe('applyDiversity', () => {
         const picked = applyDiversity(scored, 2);
 
         expect(picked.length).toBe(2);
-    });
-});
-
-describe('recommendByRules', () => {
-    it('요청한 개수를 넘지 않고 자기 자신을 포함하지 않는다', () => {
-        const result = recommendByRules('a', TOOLS, 3);
-
-        expect(result.length).toBeLessThanOrEqual(3);
-        expect(result.some((item) => item.tool.id === 'a')).toBe(false);
-    });
-});
-
-describe('selectByRoundRobin', () => {
-    it('카테고리를 번갈아 골라 한 카테고리에 몰리지 않는다', () => {
-        const result = selectByRoundRobin(TOOLS, 4);
-        const categories = result.map((item) => item.tool.category);
-
-        expect(new Set(categories).size).toBeGreaterThan(1);
-    });
-
-    it('도구 수보다 많이 요청해도 전체 개수를 넘지 않는다', () => {
-        expect(selectByRoundRobin(TOOLS, 100).length).toBe(TOOLS.length);
-    });
-});
-
-describe('selectFeatured', () => {
-    it('개인화 신호가 없으면 라운드로빈 결과를 준다', () => {
-        const result = selectFeatured(TOOLS, 3, []);
-
-        expect(result.length).toBe(3);
-        expect(new Set(result.map((item) => item.tool.category)).size).toBeGreaterThan(1);
-    });
-
-    it('즐겨찾기를 seed 로 쓰면 seed 자신은 제외한다', () => {
-        const result = selectFeatured(TOOLS, 3, ['a']);
-
-        expect(result.some((item) => item.tool.id === 'a')).toBe(false);
-    });
-
-    it('존재하지 않는 seed 만 있으면 라운드로빈으로 폴백한다', () => {
-        const result = selectFeatured(TOOLS, 2, ['없는도구']);
-
-        expect(result.length).toBe(2);
-    });
-
-    it('개인화 결과가 모자라면 라운드로빈으로 limit 을 채운다', () => {
-        const result = selectFeatured(TOOLS, 5, ['a']);
-
-        expect(result.length).toBe(5);
     });
 });

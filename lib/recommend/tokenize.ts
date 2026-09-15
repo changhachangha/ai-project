@@ -62,6 +62,25 @@ export function tokenize(text: string): string[] {
     return tokens;
 }
 
+/**
+ * 공백 단위 단어만 뽑는다 (2-gram 없음).
+ *
+ * 검색어 매칭에 쓴다. `tokenize` 의 2-gram 은 유사도 계산에는 도움이 되지만,
+ * 검색에서는 "base64" 의 bigram("ba")이 무관한 설명에 걸려 오탐을 만든다.
+ * 부분 문자열 검색은 단어 단위로 하는 편이 정확하다.
+ */
+export function splitWords(text: string): string[] {
+    if (!text) return [];
+
+    return text
+        .toLowerCase()
+        .replace(/[^0-9a-z가-힣\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .split(' ')
+        .filter((word) => word.length > 0);
+}
+
 /** 도구 하나를 문서 텍스트로 만든다. 태그는 두 번 넣어 가중치를 높인다. */
 export function buildDocumentText(tool: {
     name: string;

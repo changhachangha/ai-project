@@ -1,10 +1,6 @@
 import { allTools } from '@/app/data/integrations';
-import {
-    buildIndex,
-    cosineSimilarity,
-    recommendByContent,
-    similarityMap,
-} from '@/lib/recommend/content';
+import { recommend } from '@/lib/recommend';
+import { buildIndex, cosineSimilarity, similarityMap } from '@/lib/recommend/content';
 
 describe('cosineSimilarity', () => {
     const vec = (entries: Record<string, number>) => new Map(Object.entries(entries));
@@ -66,17 +62,21 @@ describe('similarityMap', () => {
     });
 });
 
-describe('recommendByContent — 실제 데이터 sanity', () => {
-    it('base64 의 최상위 유사 도구는 base32 다', () => {
-        const result = recommendByContent('base64', allTools, 3);
+describe('similarityMap — 실제 데이터 sanity', () => {
+    // 유사도 상위 N개를 뽑는 헬퍼 — recommendByContent 삭제 후에도
+    // 실제 데이터 sanity 확인은 유지한다.
+    const topSimilar = (toolId: string, n: number): string[] =>
+        [...similarityMap(toolId, allTools).entries()]
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, n)
+            .map(([id]) => id);
 
-        expect(result[0].tool.id).toBe('base32');
+    it('base64 의 최상위 유사 도구는 base32 다', () => {
+        expect(topSimilar('base64', 1)).toEqual(['base32']);
     });
 
     it('hash-tool 의 상위 후보에 file-hash-calculator 가 포함된다', () => {
-        const result = recommendByContent('hash-tool', allTools, 3);
-
-        expect(result.map((item) => item.tool.id)).toContain('file-hash-calculator');
+        expect(topSimilar('hash-tool', 3)).toContain('file-hash-calculator');
     });
 
     it('카테고리를 넘는 연관은 유사도가 약하게 나온다 (related 규칙이 필요한 이유)', () => {
@@ -90,10 +90,10 @@ describe('recommendByContent — 실제 데이터 sanity', () => {
         expect(crossCategory).toBeLessThan(sameCategoryPair);
     });
 
-    it('요청한 개수를 넘지 않고 사유가 채워진다', () => {
-        const result = recommendByContent('case-converter', allTools, 4);
+    it('공개 interface 의 recommend 는 요청한 개수를 넘지 않고 사유가 채워진다', () => {
+        const result = recommend('case-converter', allTools, 4);
 
         expect(result.length).toBeLessThanOrEqual(4);
-        expect(result.every((item) => item.reasons.includes('similar-content'))).toBe(true);
+        expect(result.every((item) => item.reasons.length > 0)).toBe(true);
     });
 });

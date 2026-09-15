@@ -1,61 +1,42 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { allTools } from '@/app/data/integrations';
-import { getPathForCategory } from '@/lib/utils/routing';
+import { useToolCatalog } from '@/hooks/useToolCatalog';
+import { toolPath } from '@/lib/utils/paths';
 
 interface CommandPaletteProps {
     isOpen: boolean;
     onClose: () => void;
-    togglePalette: () => void;
 }
 
-const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, togglePalette }) => {
-    const [searchTerm, setSearchTerm] = useState('');
+const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
     const router = useRouter();
 
-    const filteredTools = useMemo(() => {
-        const keyword = searchTerm.trim().toLowerCase();
-        if (!keyword) return allTools;
+    // 이름·설명 부분 일치가 아니라 필드 가중치 랭킹(태그·카테고리 포함)을 쓴다.
+    const { query, setQuery, searchHits } = useToolCatalog({ tools: allTools });
 
-        return allTools.filter(
-            (tool) =>
-                tool.name.toLowerCase().includes(keyword) || tool.description.toLowerCase().includes(keyword)
-        );
-    }, [searchTerm]);
+    // 검색어가 없으면 전체 목록, 있으면 랭킹 결과.
+    const visibleTools = query.trim() ? searchHits.map((hit) => hit.tool) : allTools;
 
     const handleToolSelect = (toolId: string) => {
         const tool = allTools.find((item) => item.id === toolId);
         if (!tool) return;
 
-        router.push(`/${getPathForCategory(tool.category)}/${tool.id}`);
+        router.push(toolPath(tool));
         onClose();
     };
 
-    const handleKeyDown = useCallback(
-        (event: KeyboardEvent) => {
-            if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-                event.preventDefault();
-                togglePalette();
-            }
-        },
-        [togglePalette]
-    );
-
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [handleKeyDown]);
+    // Cmd/Ctrl+K 단축키는 app-providers.tsx 가 단독으로 등록한다.
+    // 여기서도 등록하면 한 번의 keydown 에 토글이 두 번 실행돼 팔레트가 열리지 않는다.
 
     // 닫힐 때 이전 검색어가 남지 않도록 초기화한다.
     useEffect(() => {
-        if (!isOpen) setSearchTerm('');
-    }, [isOpen]);
+        if (!isOpen) setQuery('');
+    }, [isOpen, setQuery]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -66,14 +47,14 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose, toggle
                 </DialogHeader>
                 <Input
                     placeholder='도구 검색...'
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
                     className='col-span-3'
                     autoFocus
                 />
                 <div className='grid gap-2 py-4 max-h-[50vh] overflow-y-auto'>
-                    {filteredTools.length > 0 ? (
-                        filteredTools.map((tool) => (
+                    {visibleTools.length > 0 ? (
+                        visibleTools.map((tool) => (
                             <div
                                 key={tool.id}
                                 className='p-2 border rounded-md cursor-pointer hover:bg-muted'

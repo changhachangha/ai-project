@@ -97,7 +97,7 @@ ai-project/
 ├── hooks/                        # 커스텀 React 훅
 ├── lib/                          # 유틸리티
 │   ├── tools/                    # 도구 순수 로직 (encode/hash/crypto/color/...)
-│   ├── utils/routing.ts          # 카테고리 ↔ 경로 매핑
+│   ├── utils/paths.ts            # 도구 section+id → 경로 파생
 │   └── ...
 ├── __tests__/                    # Jest 테스트
 ├── docs/                         # 문서 (사용 가이드 · API · 도구 추가 체크리스트)

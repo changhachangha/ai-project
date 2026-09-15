@@ -1,7 +1,7 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { Integration } from './data/types';
 import { useRouter } from 'next/navigation';
 import { allTools } from './data/integrations';
@@ -15,89 +15,37 @@ import dynamic from 'next/dynamic';
 const MotionH1 = dynamic(() => import('framer-motion').then((mod) => mod.motion.h1), { ssr: false });
 const MotionDiv = dynamic(() => import('framer-motion').then((mod) => mod.motion.div), { ssr: false });
 
-import { getPathForCategory } from '@/lib/utils/routing';
-import { selectFeatured } from '@/lib/recommend/rules';
-import { DEFAULT_FEATURED_LIMIT } from '@/lib/recommend/weights';
+import { useToolCatalog, type ToolSortValue } from '@/hooks/useToolCatalog';
+import { toolPath } from '@/lib/utils/paths';
 
 const ITEMS_PER_PAGE = 30;
 
-const sortOptions = [
-    { value: 'name-asc', label: 'Name (A-Z)' },
-    { value: 'name-desc', label: 'Name (Z-A)' },
-    { value: 'category', label: 'Category' },
-];
-
 export default function HomePageClient() {
     const router = useRouter();
-    const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [sortOption, setSortOption] = useState('name-asc');
-    const [favorites, setFavorites] = useState<string[]>([]);
 
-    useEffect(() => {
-        const savedFavorites = localStorage.getItem('favoriteIntegrations');
-        if (savedFavorites) {
-            setFavorites(JSON.parse(savedFavorites));
-        }
-    }, []);
+    // 카탈로그 상태(검색·정렬·즐겨찾기·사용기록·추천)는 전부 훅 안에 있다.
+    const {
+        setQuery,
+        sortOption,
+        setSortOption,
+        sortOptions,
+        favorites,
+        toggleFavorite,
+        visibleTools,
+        favoriteTools,
+        featuredTools,
+        featuredReasons,
+    } = useToolCatalog({ tools: allTools });
 
-    useEffect(() => {
-        localStorage.setItem('favoriteIntegrations', JSON.stringify(favorites));
-    }, [favorites]);
-
-    const toggleFavorite = (id: string) => {
-        setFavorites((prev) => {
-            if (prev.includes(id)) {
-                return prev.filter((favId) => favId !== id);
-            } else {
-                return [...prev, id];
-            }
-        });
-    };
-
-    const sortedAndFilteredTools = useMemo(() => {
-        const filtered = allTools.filter((integration) => {
-            const searchMatch =
-                integration.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                integration.description.toLowerCase().includes(searchQuery.toLowerCase());
-            return searchMatch;
-        });
-
-        return filtered.sort((a, b) => {
-            switch (sortOption) {
-                case 'name-asc':
-                    return a.name.localeCompare(b.name);
-                case 'name-desc':
-                    return b.name.localeCompare(a.name);
-                case 'category':
-                    return a.category.localeCompare(b.category);
-                default:
-                    return 0;
-            }
-        });
-    }, [searchQuery, sortOption]);
-
-    const favoriteIntegrations = useMemo(() => {
-        return allTools.filter((integration) => favorites.includes(integration.id));
-    }, [favorites]);
-
-    // 홈 추천 영역.
-    // 즐겨찾기를 개인화 신호로 쓰고, 없으면 카테고리 라운드로빈으로 채운다.
-    // (기존에는 allTools.slice(0, 10) 이라 인코딩 도구 10개만 노출됐다)
-    const featuredTools = useMemo(
-        () => selectFeatured(allTools, DEFAULT_FEATURED_LIMIT, favorites).map((item) => item.tool),
-        [favorites]
-    );
-
-    const totalPages = Math.ceil(sortedAndFilteredTools.length / ITEMS_PER_PAGE);
-    const paginatedIntegrations = sortedAndFilteredTools.slice(
+    const totalPages = Math.ceil(visibleTools.length / ITEMS_PER_PAGE);
+    const paginatedIntegrations = visibleTools.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
         currentPage * ITEMS_PER_PAGE
     );
 
     const handleSelectIntegration = (integration: Integration) => {
-        const path = `/${getPathForCategory(integration.category)}/${integration.id}`;
-        router.push(path);
+        router.push(toolPath(integration));
     };
 
     return (
@@ -122,6 +70,7 @@ export default function HomePageClient() {
                     >
                         <FeaturedIntegrations
                             integrations={featuredTools}
+                            reasonById={featuredReasons}
                             onSelect={handleSelectIntegration}
                         />
                     </MotionDiv>
@@ -129,7 +78,7 @@ export default function HomePageClient() {
                     <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
                         <SearchBar
                             onSearch={(query) => {
-                                setSearchQuery(query);
+                                setQuery(query);
                                 setCurrentPage(1);
                             }}
                         />
@@ -137,7 +86,7 @@ export default function HomePageClient() {
                             <SortOptions
                                 options={sortOptions}
                                 selectedOption={sortOption}
-                                onSelectOption={setSortOption}
+                                onSelectOption={(value) => setSortOption(value as ToolSortValue)}
                             />
                         </div>
                     </div>
@@ -154,7 +103,7 @@ export default function HomePageClient() {
                                 value='favorites'
                                 className='text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground'
                             >
-                                Favorites ({favoriteIntegrations.length})
+                                Favorites ({favoriteTools.length})
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value='all' className='mt-4'>
@@ -175,9 +124,9 @@ export default function HomePageClient() {
                             </div>
                         </TabsContent>
                         <TabsContent value='favorites' className='mt-4'>
-                            {favoriteIntegrations.length > 0 ? (
+                            {favoriteTools.length > 0 ? (
                                 <IntegrationGrid
-                                    integrations={favoriteIntegrations}
+                                    integrations={favoriteTools}
                                     onSelectIntegration={handleSelectIntegration}
                                     favorites={favorites}
                                     onToggleFavorite={toggleFavorite}

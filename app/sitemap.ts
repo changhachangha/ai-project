@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { allTools } from '@/app/data/integrations';
-import { getPathForCategory } from '@/lib/utils/routing';
+import { toolPath } from '@/lib/utils/paths';
 import { SITE_URL } from '@/lib/site';
 
 /** 정적 페이지 (도구가 아닌 고정 라우트) */
@@ -22,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
 
     const toolEntries: MetadataRoute.Sitemap = allTools.map((tool) => ({
-        url: `${SITE_URL}/${getPathForCategory(tool.category)}/${tool.id}`,
+        url: `${SITE_URL}${toolPath(tool)}`,
         lastModified,
         changeFrequency: 'monthly',
         priority: 0.7,

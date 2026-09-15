@@ -33,6 +33,3 @@ export const groupedTools = allTools.reduce(
     },
     [] as { category: string; tools: Integration[] }[]
 );
-
-// 모든 카테고리 목록을 생성합니다.
-export const allCategories: string[] = ['All', ...groupedTools.map((g) => g.category)];

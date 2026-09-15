@@ -1,11 +1,21 @@
 import type { LucideIcon } from 'lucide-react';
 
+/** URL 의 첫 세그먼트. app/(main)/{section}/{id} 디렉터리와 1:1 대응한다. */
+export const TOOL_SECTIONS = ['encoding', 'conversion', 'text', 'security', 'developer'] as const;
+export type ToolSection = (typeof TOOL_SECTIONS)[number];
+
 // 두 파일에서 공통으로 사용하던 타입을 이 파일에 정의합니다.
 export type Integration = {
     id: string;
     name: string;
     description: string;
+    /**
+     * 표시 라벨·그룹핑·추천 시그널 전용. 라우팅에는 쓰지 않는다.
+     * (라우팅은 section 이 담당한다 — 한국어 라벨 리네임이 URL 을 깨지 않게)
+     */
     category: string;
+    /** 도구 페이지 URL 의 첫 세그먼트. app/(main)/{section}/{id} 와 1:1 대응. */
+    section: ToolSection;
     icon: LucideIcon;
     color: string;
     /**

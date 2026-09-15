@@ -3,7 +3,7 @@
  */
 import { GET } from '@/app/api/tools/route';
 import { allTools } from '@/app/data/integrations';
-import { getPathForCategory } from '@/lib/utils/routing';
+import { toolPath } from '@/lib/utils/paths';
 
 describe('GET /api/tools', () => {
     it('200 과 함께 전체 도구 목록을 반환한다', async () => {
@@ -22,7 +22,8 @@ describe('GET /api/tools', () => {
             expect(typeof tool.id).toBe('string');
             expect(tool.name.length).toBeGreaterThan(0);
             expect(tool.description.length).toBeGreaterThan(0);
-            expect(tool.path).toBe(`/${getPathForCategory(tool.category)}/${tool.id}`);
+            const source = allTools.find((item) => item.id === tool.id)!;
+            expect(tool.path).toBe(toolPath(source));
         });
     });
 

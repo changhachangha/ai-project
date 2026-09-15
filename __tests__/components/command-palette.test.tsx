@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 
 import CommandPalette from '@/components/command-palette/CommandPalette';
 import { allTools } from '@/app/data/integrations';
-import { getPathForCategory } from '@/lib/utils/routing';
+import { toolPath } from '@/lib/utils/paths';
 
 const push = jest.fn();
 
@@ -22,8 +22,7 @@ beforeEach(() => {
     push.mockClear();
 });
 
-const renderPalette = (isOpen = true) =>
-    render(<CommandPalette isOpen={isOpen} onClose={jest.fn()} togglePalette={jest.fn()} />);
+const renderPalette = (isOpen = true) => render(<CommandPalette isOpen={isOpen} onClose={jest.fn()} />);
 
 describe('CommandPalette', () => {
     it('실제 도구 목록을 보여준다', () => {
@@ -62,13 +61,13 @@ describe('CommandPalette', () => {
         await user.click(screen.getByText(target.name));
 
         // `/(main)/tools/...` 같은 라우트 그룹 경로가 아니라 실제 URL 이어야 한다.
-        expect(push).toHaveBeenCalledWith(`/${getPathForCategory(target.category)}/${target.id}`);
+        expect(push).toHaveBeenCalledWith(toolPath(target));
         expect(push).toHaveBeenCalledWith('/text/case-converter');
     });
 
     it('모든 도구가 실제 존재하는 경로로 이동한다', async () => {
         // 하드코딩된 목록이 다시 들어오면 이 검사가 먼저 깨진다.
-        const paths = allTools.map((tool) => `/${getPathForCategory(tool.category)}/${tool.id}`);
+        const paths = allTools.map((tool) => toolPath(tool));
 
         expect(paths.every((path) => !path.includes('(main)'))).toBe(true);
         expect(paths.every((path) => !path.startsWith('/tools/'))).toBe(true);

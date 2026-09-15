@@ -29,8 +29,17 @@ export type Recommendation = {
     reasons: RecommendReason[];
 };
 
+/**
+ * 점수 기여 항목.
+ *
+ * 표시용 사유(`RecommendReason`)에 감점 신호를 더한 값이다.
+ * 감점(`alreadyShown`)은 화면에 라벨로 보여줄 대상이 아니라서 사유 유니온에 넣지 않는다.
+ * 넣으면 "이미 노출됨" 이라는 문구가 사용자에게 노출된다.
+ */
+export type ScoreSignal = RecommendReason | 'alreadyShown';
+
 /** 신호별 점수 기여분. 디버깅과 테스트에서 "왜 이 순위인지" 확인하는 데 쓴다. */
-export type ScoreBreakdown = Partial<Record<RecommendReason, number>>;
+export type ScoreBreakdown = Partial<Record<ScoreSignal, number>>;
 
 export type ScoredTool = {
     tool: Integration;

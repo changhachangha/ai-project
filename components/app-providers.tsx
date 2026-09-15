@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import CommandPalette from '@/components/command-palette/CommandPalette';
-import { SidebarProvider } from '@/lib/context/SidebarContext';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/sonner';
@@ -43,14 +42,11 @@ export default function AppProviders({ children }: { children: React.ReactNode }
     return (
         <ThemeProvider attribute='class' defaultTheme='light' enableSystem disableTransitionOnChange>
             <ErrorBoundary>
-                <SidebarProvider>
-                    {children}
-                    <CommandPalette
-                        isOpen={isCommandPaletteOpen}
-                        onClose={() => setIsCommandPaletteOpen(false)}
-                        togglePalette={toggleCommandPalette}
-                    />
-                </SidebarProvider>
+                {children}
+                <CommandPalette
+                    isOpen={isCommandPaletteOpen}
+                    onClose={() => setIsCommandPaletteOpen(false)}
+                />
                 <Toaster />
             </ErrorBoundary>
         </ThemeProvider>

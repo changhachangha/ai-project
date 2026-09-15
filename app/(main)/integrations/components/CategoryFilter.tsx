@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
-import { getPathForCategory } from '@/lib/utils/routing';
+import { toolPath } from '@/lib/utils/paths';
 
 type CategoryFilterProps = {
     groupedTools: {
@@ -25,15 +25,6 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
     const router = useRouter();
     const pathname = usePathname();
 
-    useEffect(() => {
-        console.log('CategoryFilter mounted');
-        return () => console.log('CategoryFilter unmounted');
-    }, []);
-
-    useEffect(() => {
-        console.log('CategoryFilter isOpen changed:', isOpen);
-    }, [isOpen]);
-
     const [openCategory, setOpenCategory] = useState<string | null>(() => {
         const currentTool = groupedTools.flatMap((g) => g.tools).find((t) => pathname.includes(`/${t.id}`));
         return currentTool?.category || null;
@@ -41,8 +32,7 @@ export default function CategoryFilter({ groupedTools, isOpen, onClose }: Catego
 
     const handleLinkClick = useCallback(
         (tool: Integration) => {
-            // --- 수정: 동적 경로 생성 ---
-            const path = `/${getPathForCategory(tool.category)}/${tool.id}`;
+            const path = toolPath(tool);
             router.push(path);
             onClose();
         },

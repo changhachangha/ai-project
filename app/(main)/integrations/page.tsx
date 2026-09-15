@@ -4,20 +4,14 @@
 
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useState, useEffect } from 'react';
 import type { Integration } from '../../data/types';
 import { allTools } from '../../data/integrations';
 import IntegrationGrid from './components/IntegrationGrid';
 import SearchBar from './components/SearchBar';
 import SortOptions from './components/SortOptions'; // --- 추가된 부분 ---
 
-import { getPathForCategory } from '@/lib/utils/routing';
-
-const sortOptions = [
-    { value: 'name-asc', label: 'Name (A-Z)' },
-    { value: 'name-desc', label: 'Name (Z-A)' },
-    { value: 'category', label: 'Category' },
-];
+import { useToolCatalog, type ToolSortValue } from '@/hooks/useToolCatalog';
+import { toolPath } from '@/lib/utils/paths';
 
 export default function IntegrationsPage() {
     const router = useRouter();
@@ -25,51 +19,13 @@ export default function IntegrationsPage() {
 
     const selectedCategory = searchParams.get('category') || 'All';
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [sortOption, setSortOption] = useState('name-asc');
-    const [favorites, setFavorites] = useState<string[]>([]);
-
-    useEffect(() => {
-        const savedFavorites = localStorage.getItem('favoriteIntegrations');
-        if (savedFavorites) {
-            setFavorites(JSON.parse(savedFavorites));
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('favoriteIntegrations', JSON.stringify(favorites));
-    }, [favorites]);
-
-    const handleToggleFavorite = (id: string) => {
-        setFavorites((prev) => (prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]));
-    };
-
-    const sortedAndFilteredTools = useMemo(() => {
-        const filtered = allTools.filter((tool) => {
-            const categoryMatch = selectedCategory === 'All' || tool.category === selectedCategory;
-            const searchMatch =
-                tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-            return categoryMatch && searchMatch;
-        });
-
-        return filtered.sort((a, b) => {
-            switch (sortOption) {
-                case 'name-asc':
-                    return a.name.localeCompare(b.name);
-                case 'name-desc':
-                    return b.name.localeCompare(a.name);
-                case 'category':
-                    return a.category.localeCompare(b.category);
-                default:
-                    return 0;
-            }
-        });
-    }, [selectedCategory, searchQuery, sortOption]);
+    // URL 파라미터가 카테고리를 제어하므로 controlled 로 넘긴다.
+    const { setQuery, sortOption, setSortOption, sortOptions, favorites, toggleFavorite, visibleTools } = useToolCatalog(
+        { tools: allTools, category: selectedCategory }
+    );
 
     const handleSelectTool = (tool: Integration) => {
-        const path = `/${getPathForCategory(tool.category)}/${tool.id}`;
-        router.push(path);
+        router.push(toolPath(tool));
     };
 
     return (
@@ -84,18 +40,22 @@ export default function IntegrationsPage() {
             </motion.h1>
 
             <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
-                <SearchBar onSearch={setSearchQuery} />
+                <SearchBar onSearch={setQuery} />
                 <div className='flex items-center gap-4'>
-                    <SortOptions options={sortOptions} selectedOption={sortOption} onSelectOption={setSortOption} />
+                    <SortOptions
+                        options={sortOptions}
+                        selectedOption={sortOption}
+                        onSelectOption={(value) => setSortOption(value as ToolSortValue)}
+                    />
                 </div>
             </div>
 
             <div className='flex-1 overflow-auto mt-4'>
                 <IntegrationGrid
-                    integrations={sortedAndFilteredTools}
+                    integrations={visibleTools}
                     onSelectIntegration={handleSelectTool}
                     favorites={favorites}
-                    onToggleFavorite={handleToggleFavorite}
+                    onToggleFavorite={toggleFavorite}
                 />
             </div>
         </div>
