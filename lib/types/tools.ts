@@ -65,8 +65,15 @@ export interface DiffToolInput {
     newText: string;
 }
 
+export interface DiffPart {
+    value: string;
+    added: boolean;
+    removed: boolean;
+}
+
 export interface DiffToolOutput {
-    diffResult: string; // e.g., a unified diff format
+    diffResult: string; // HTML fragment (escaped); kept for the public /api/diff contract
+    parts: DiffPart[]; // structured changes for safe UI rendering
     errorMessage?: string;
 }
 

@@ -1,8 +1,10 @@
-import { DiffToolInput, DiffToolOutput } from '@/lib/types/tools';
-import { diffChars, diffLines, diffWords, Change } from 'diff';
+import { DiffToolInput, DiffToolOutput, DiffPart } from '@/lib/types/tools';
+import { diffChars, diffLines, diffWords } from 'diff';
+
+const escapeHtml = (value: string): string =>
+    value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 export const processDiff = (input: DiffToolInput, type: 'chars' | 'words' | 'lines'): DiffToolOutput => {
-    let diffResult = '';
     let changes;
 
     switch (type) {
@@ -12,17 +14,24 @@ export const processDiff = (input: DiffToolInput, type: 'chars' | 'words' | 'lin
         case 'words':
             changes = diffWords(input.originalText, input.newText);
             break;
-        case 'lines':
-            changes = diffLines(input.originalText, input.newText);
-            break;
         default:
             changes = diffLines(input.originalText, input.newText);
     }
 
-    changes.forEach((part: Change) => {
-        const color = part.added ? 'green' : part.removed ? 'red' : 'grey';
-        diffResult += `<span style="color:${color};">${part.value}</span>`;
-    });
+    const parts: DiffPart[] = changes.map((part) => ({
+        value: part.value,
+        added: part.added === true,
+        removed: part.removed === true,
+    }));
 
-    return { diffResult };
+    // API 계약상 HTML 조각을 함께 반환한다. 값은 이스케이프한다 —
+    // 이 문자열을 innerHTML 로 렌더하는 소비자가 있을 수 있기 때문이다.
+    const diffResult = parts
+        .map((part) => {
+            const color = part.added ? 'green' : part.removed ? 'red' : 'grey';
+            return `<span style="color:${color};">${escapeHtml(part.value)}</span>`;
+        })
+        .join('');
+
+    return { diffResult, parts };
 };

@@ -8,68 +8,40 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Copy, Globe, ArrowLeftRight, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { encodePunycode, decodePunycode } from '@/lib/tools/punycode';
 
 const PunycodeClient = memo(() => {
     const [input, setInput] = useState('');
     const [output, setOutput] = useState('');
     const [error, setError] = useState('');
 
-    // 간단한 Punycode 구현 (실제로는 punycode 라이브러리 사용 권장)
-    const punycodeDecode = useCallback((input: string) => {
-        try {
-            // xn-- 접두사 제거
-            if (input.startsWith('xn--')) {
-                const encoded = input.slice(4);
-                // 기본적인 ASCII 문자만 처리하는 간단한 구현
-                return decodeURIComponent(encoded.replace(/-/g, '%'));
-            }
-            return input;
-        } catch {
-            throw new Error('유효하지 않은 Punycode 형식입니다.');
-        }
-    }, []);
-
-    const punycodeEncode = useCallback((input: string) => {
-        try {
-            // 비ASCII 문자가 있는지 확인
-            if (/[^\x00-\x7F]/.test(input)) {
-                // 간단한 인코딩 (실제로는 더 복잡한 알고리즘 필요)
-                const encoded = encodeURIComponent(input).replace(/%/g, '-');
-                return `xn--${encoded}`;
-            }
-            return input;
-        } catch {
-            throw new Error('인코딩 중 오류가 발생했습니다.');
-        }
-    }, []);
-
     const handleEncode = useCallback(() => {
         if (!input.trim()) return;
 
-        try {
-            const result = punycodeEncode(input.trim());
-            setOutput(result);
-            setError('');
-            toast.success('Punycode로 인코딩되었습니다!');
-        } catch (err) {
-            setError(err instanceof Error ? err.message : '인코딩 중 오류가 발생했습니다.');
+        const result = encodePunycode(input.trim());
+        if (result.errorMessage) {
+            setError(result.errorMessage);
             setOutput('');
+            return;
         }
-    }, [input, punycodeEncode]);
+        setOutput(result.text);
+        setError('');
+        toast.success('Punycode로 인코딩되었습니다!');
+    }, [input]);
 
     const handleDecode = useCallback(() => {
         if (!input.trim()) return;
 
-        try {
-            const result = punycodeDecode(input.trim());
-            setOutput(result);
-            setError('');
-            toast.success('Punycode가 디코딩되었습니다!');
-        } catch (err) {
-            setError(err instanceof Error ? err.message : '디코딩 중 오류가 발생했습니다.');
+        const result = decodePunycode(input.trim());
+        if (result.errorMessage) {
+            setError(result.errorMessage);
             setOutput('');
+            return;
         }
-    }, [input, punycodeDecode]);
+        setOutput(result.text);
+        setError('');
+        toast.success('Punycode가 디코딩되었습니다!');
+    }, [input]);
 
     const handleCopy = useCallback(() => {
         navigator.clipboard.writeText(output).then(() => {

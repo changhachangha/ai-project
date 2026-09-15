@@ -4,9 +4,23 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useEncoding } from '@/hooks/useEncoding';
+import { processEncode, processDecode } from '@/lib/tools/encode';
 import { Upload } from 'lucide-react';
 import React, { useRef } from 'react';
-import { encodeBase64, decodeBase64, handleFileChangeLogic } from './Base64Logic';
+
+// useEncoding 은 (string)=>string 형태를 원하므로 lib 결과를 어댑트한다.
+// errorMessage 가 있으면 던져서 훅의 오류 메시지 경로를 탄다.
+const encodeBase64 = (text: string): string => {
+    const result = processEncode({ text, encodingType: 'base64' });
+    if (result.errorMessage) throw new Error(result.errorMessage);
+    return result.encodedText;
+};
+
+const decodeBase64 = (text: string): string => {
+    const result = processDecode({ text, encodingType: 'base64' });
+    if (result.errorMessage) throw new Error(result.errorMessage);
+    return result.decodedText;
+};
 
 export default function ClientBase64Tool() {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -18,7 +32,22 @@ export default function ClientBase64Tool() {
         });
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        handleFileChangeLogic(event, setOutput, setInput, setMode);
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target?.result;
+            if (typeof result === 'string') {
+                setOutput(result.split(',')[1]);
+                setInput(`파일: ${file.name} (${Math.round(file.size / 1024)} KB)`);
+                setMode('encode');
+            }
+        };
+        reader.onerror = () => {
+            setOutput('파일을 읽는 중 오류가 발생했습니다.');
+        };
+        reader.readAsDataURL(file);
     };
 
     const customClear = () => {

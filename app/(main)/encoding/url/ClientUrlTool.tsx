@@ -4,17 +4,31 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useEncoding } from '@/hooks/useEncoding';
+import { processEncode, processDecode } from '@/lib/tools/encode';
 import { useEffect, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+
+// useEncoding 의 (string)=>string 형태에 맞춰 lib 결과를 어댑트한다.
+const encodeUrl = (text: string): string => {
+    const result = processEncode({ text, encodingType: 'url' });
+    if (result.errorMessage) throw new Error(result.errorMessage);
+    return result.encodedText;
+};
+
+const decodeUrl = (text: string): string => {
+    const result = processDecode({ text, encodingType: 'url' });
+    if (result.errorMessage) throw new Error(result.errorMessage);
+    return result.decodedText;
+};
 
 export default function ClientUrlTool() {
     const [isRealtime, setIsRealtime] = useState(true);
 
     const { input, setInput, output, setOutput, mode, setMode, handleEncode, handleDecode, handleClear, handleCopy } =
         useEncoding({
-            encodeFn: (input) => encodeURIComponent(input),
-            decodeFn: (input) => decodeURIComponent(input),
+            encodeFn: encodeUrl,
+            decodeFn: decodeUrl,
         });
 
     useEffect(() => {
@@ -28,9 +42,9 @@ export default function ClientUrlTool() {
                     return;
                 }
                 if (mode === 'encode') {
-                    setOutput(encodeURIComponent(input));
+                    setOutput(encodeUrl(input));
                 } else {
-                    setOutput(decodeURIComponent(input));
+                    setOutput(decodeUrl(input));
                 }
             } catch {
                 setOutput('유효하지 않은 입력입니다.');
